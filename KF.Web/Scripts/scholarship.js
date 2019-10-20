@@ -114,36 +114,6 @@ scholarShip.prototype.delete = function () {
 
 scholarShip.prototype.afterDelete = function () { }
 
-scholarShip.prototype.listItemUI = function () {
-    var _self = this;
-    var li = liUI();
-
-    var list_info = list_infoUI();
-    li.appendChild(list_info);
-
-    var p = pUI({ text: _self.scholarShipName });
-    list_info.appendChild(p);
-
-    var operation = operationUI({
-        detail: {
-            text: "详情",
-            click: function () {
-                window.location.href = "/home/province/city/university/scholarship/detail.html?scholarShipId=" + _self.scholarShipId;
-            }
-        },
-        del: {
-            text: "删除",
-            click: function () {
-                _self.delete();
-            }
-        }
-    });
-    list_info.appendChild(operation);
-
-
-    return li;
-}
-
 scholarShip.prototype.detailUI = function() {
     var _self = this;
     var fragment = document.createDocumentFragment();
@@ -158,10 +128,10 @@ scholarShip.prototype.detailUI = function() {
 }
 
 function scholarShips() {
-    entitiesPage.call(this);
+    kf.util.entitiesPage.call(this);
 }
 
-$.extend(scholarShips.prototype, entitiesPage.prototype);
+$.extend(scholarShips.prototype, kf.util.entitiesPage.prototype);
 
 scholarShips.prototype.load = function () {
     var _self = this;
@@ -192,16 +162,4 @@ scholarShips.prototype.load = function () {
 
 scholarShips.prototype.afterLoad = function () {
     
-}
-
-scholarShips.prototype.listUI = function () {
-    var _self = this;
-    var fragment = document.createDocumentFragment();
-    $.each(_self.values, function (i, item) {
-        item.afterDelete = function () {
-            _self.load();
-        }
-        fragment.appendChild(item.listItemUI());
-    });
-    return fragment;
 }

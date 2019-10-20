@@ -19,6 +19,7 @@
     <script src="/Scripts/Framework/Components/div_list_info.js"></script>
     <script src="/Scripts/university.js"></script>
     <script src="/Scripts/scholarship.js"></script>
+    <script src="/Scripts/Framework/modules/scholarShiplist.js"></script>
 </head>
 <body>
     <header></header>
@@ -29,101 +30,9 @@
     </section>
 
     <script>
-        var _university;
-        var _scholarShips;
         $(document).ready(function () {
             pageInit();
         });
-
-        function pageInit() {
-            initUniversity();
-            initScholarShips();
-
-            _university.load();
-            _scholarShips.load();
-        }
-
-        function initPageList() {
-            var _scholarShipUI = new scholarShipUI();
-            $("#scholarships").pageList({
-                itemTemplate: _scholarShipUI.listItemUI,
-                events: {
-                    detail: function (e) {
-                        var target = e.target;
-                        var scholarShipId = $(target).data("scholarShip")["scholarShipId"];
-                        window.location.href = "/home/province/city/university/scholarship/detail.html?scholarShipId=" + scholarShipId;
-                    },
-                    del: function (obj) {
-                        var target = e.target;
-                        var _scholarship = $(target).data("scholarShip");
-                        var removeElem = $(target).data("removeElem");
-                        _scholarship.afterDelete = function () {
-                            $(removeElem).remove();
-                            _scholarShips.filter.startNumber = _scholarShips.filter.startNumber - 1;
-                        }
-                        _scholarship.delete();
-                    }
-                }
-            });
-        }
-
-        function initUniversity() {
-            _university = new university();
-            _university.universityId = getUniversityId();
-            _university.afterLoad = function () {
-                var _self = this;
-                $("header").pageHeader({
-                    canReturn: true,
-                    headerName: _self.universityName + " 奖学金列表",
-                    action: function () {
-                        window.location.href = "/home/province/city/university/scholarship/detail.html?universityId=" + getUniversityId();
-                    }
-                });
-                $("footer").pageFooter({
-                    controls: {
-                        btnPrev: {
-                            text: "前一页",
-                            type: "button",
-                            click: function () {
-                                if (_scholarShips.isFirst()) return;
-                                _scholarShips.prePage();
-                                _scholarShips.load();
-                            }
-                        },
-                        btnNext: {
-                            text: "下一页",
-                            type: "button",
-                            click: function () {
-                                if (_scholarShips.isLast()) return;
-                                _scholarShips.nextPage();
-                                _scholarShips.load();
-                            }
-                        }
-                    }
-                })
-            }
-        }
-
-        function initScholarShips() {
-            _scholarShips = new scholarShips();
-            _scholarShips.filter.universityId = getUniversityId();
-            _scholarShips.filter.pageIndex = 1;
-            _scholarShips.filter.pageSize = 50;
-            _scholarShips.afterLoad = function () {
-                var _self = this;
-                document.getElementById("scholarships").innerHTML = "";
-                document.getElementById("scholarships").appendChild(_self.listUI());
-            }
-        }
-
-        function getUniversityId() {
-            var universityId = $.getQueryString("universityId");
-            if (universityId == null) {
-                return 0;
-            } else {
-                return parseInt(universityId);
-            }
-        }
     </script>
 </body>
 </html>
