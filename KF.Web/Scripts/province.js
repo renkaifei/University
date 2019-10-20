@@ -4,6 +4,7 @@
 function province() {
     this.provinceId = 0;
     this.provinceName = "";
+    this.loadObservers = [];
 }
 
 province.prototype.load = function () {
@@ -16,17 +17,17 @@ province.prototype.load = function () {
         },
         success: function (ret) {
             _self.provinceName = ret.ProvinceName;
-            _self.afterLoad();
+            var count = this.loadObservers.length;
+            for(var i =0;i<count;i++){
+                this.loadObservers[i](this);
+            }
         }
     });
-}
-
-province.prototype.afterLoad = function () {
-
-}
+};
 
 function provinces() {
     kf.util.entities.call(this);
+    this.loadObservers = [];
 }
 
 $.extend(provinces.prototype, kf.util.entities.prototype);
@@ -45,11 +46,10 @@ provinces.prototype.load = function () {
                 _province.provinceName = item.ProvinceName;
                 _self.add(_province.provinceId, _province);
             });
-            _self.afterLoad();
+            var count = this.loadObservers.length;
+            for(var i = 0;i<count;i++){
+                this.loadObservers[i](this.values);
+            }
         }
     });
-}
-
-provinces.prototype.afterLoad = function () {
-
-}
+};
