@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+    
+    <script src="/Scripts/Libraries/jquery-1.12.4.min.js"></script>
+    <script src="/Scripts/Framework/util.js"></script>
+    <script src="/Scripts/Framework/Components/base.js"></script>
+    <script src="/Scripts/Framework/Components/div_list_info.js"></script>
+    <script src="/Scripts/Framework/Components/grid.js"></script>
+    <script src="/Scripts/Framework/Components/searchBox.js"></script>
+    <script src="/Scripts/Framework/Components/dialog.js"></script>
+
+    <script src="/Scripts/company.js"></script>
+    <script src="/Scripts/university.js"></script>
+    <script src="/Scripts/major.js"></script>
+    <script src="/Scripts/recurit.js"></script>
+    <script src="/Scripts/Framework/modules/recuritlist.js"></script>
+
+</head>
+<body>
+    <header></header>
+    <footer></footer>
+    <section class="ui-container">
+        <section class="ui-panel ui-panel-center ui-border-tb">
+            <h2>年份</h2>
+            <div id="years" class="ui-label-list">
+
+            </div>
+        </section>
+        <section class="ui-panel ui-panel-center ui-border-tb">
+            <h2 class="ui-border-b"><span>高校</span><span class="ui-panel-title-tips" id="btnSelectUniveristy">选择</span></h2>
+            <div id="universitys" class="ui-label-list">
+
+            </div>
+        </section>
+        <section class="ui-panel ui-panel-center ui-border-tb">
+            <h2 class="ui-border-b"><span>专业</span><span class="ui-panel-title-tips" id="btnSelectMajors">设置</span></h2>
+            <ul id="majors" class="ui-list">
+
+            </ul>
+        </section>
+    </section>
+
+    <script>
+        $(document).ready(function () {
+            pageInit();
+        });
+    </script>
+</body>
+</html>

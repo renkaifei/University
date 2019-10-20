@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/user.js"></script>
+</head>
+<body>
+    <header></header>
+    <footer></footer>
+    <section class="ui-container">
+        <form class="ui-form" id="userDetail"></form>
+    </section>
+
+    <script>
+        var _user;
+        $(document).ready(function () {
+            pageInit();
+        });
+
+        function pageInit() {
+            initUser();
+            initPageHeader();
+            initPageFooter();
+            if (_user.isNew()) {
+                document.getElementById("userDetail").appendChild(_user.detailUI());
+            } else {
+                _user.load();
+            }
+        }
+
+        function initUser() {
+            _user = new user();
+            _user.userId = getUserId();
+            if (_user.isNew()) {
+                _user.afterAdd = function () {
+                    history.back();
+                }
+            } else {
+                _user.afterLoad = function () {
+                    var _self = this;
+                    document.getElementById("userDetail").appendChild(_self.detailUI());
+                }
+                _user.afterUpdate = function () {
+                    history.back();
+                }
+            }
+        }
+
+        function getUserId() {
+            var userId = $.getQueryString("userId");
+            if (userId == null) {
+                return 0;
+            } else {
+                return parseInt(userId);
+            }
+        }
+
+        function initPageHeader() {
+            $("header").pageHeader({
+                headerName: "用户信息",
+                canReturn: true
+            });
+        }
+
+        function initPageFooter() {
+            $("footer").pageFooter({
+                controls: [{
+                    type: "button",
+                    text: "确定",
+                    click: function () {
+                        if (!_user.validate()) return false;
+                        if (_user.isNew()) {
+                            _user.add();
+                        } else {
+                            _user.update();
+                        }
+                    }
+                }]
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+    <script src="/Scripts/modules/jquery-1.12.4.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/province.js"></script>
+    <script src="/Scripts/city.js"></script>
+    <script src="/Scripts/university.js"></script>
+</head>
+<body>
+    <header></header>
+    <footer></footer>
+    <section class="ui-container">
+        <ul class="ui-list ui-border-tb" id="universitys"></ul>
+    </section>
+
+    <div class="ui-actionsheet" id="menuactionsheet">
+        <div class="ui-actionsheet-cnt">
+            <h4 id="filter">筛选</h4>
+        </div>
+    </div>
+
+    <div class="ui-dialog" id="filterDialog">
+        <div class="filterdialog">
+            <p>省份</p>
+            <div id="provincelist" class="ui-label-list">
+
+            </div>
+            <p>城市</p>
+            <div id="citylist">
+            </div>
+            <div class="ui-btn-group">
+                <button class="ui-btn" id="btnOkDialog">确定</button>
+                <button class="ui-btn" id="btnCancelDialog">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var _universitys;
+        var _universityComparison;
+        var _provinces;
+        var _citys;
+        var _Dialogfilter;
+        $(document).ready(function () {
+            pageInit();
+        });
+
+        function pageInit() {
+            initPageHeader();
+            initPageFooter();
+
+            //省份信息
+            initProvinces();
+            _provinces.load();
+
+            //城市信息
+            initCitys();
+
+            //高校
+            initUniversitys();
+            _universitys.load();
+
+            $("#menu").click(function () {
+                showActionSheet();
+            });
+
+            $("#filter").click(function () {
+                hideActionSheet();
+                initFilterDialog();
+            });
+
+            
+            $("#btnOkDialog").click(function () {
+                hideFilterDialog();
+                $("#universitys").html("");
+                _universitys.filter.provinceId = _Dialogfilter.provinceId;
+                _universitys.filter.cityId = _Dialogfilter.cityId;
+                _universitys.load();
+            });
+
+            $("#btnCancelDialog").click(function () {
+                hideFilterDialog();
+                _Dialogfilter.provinceId = _universitys.filter.provinceId;
+                _Dialogfilter.cityId = _universitys.filter.cityId;
+            });
+
+        }
+
+        function initPageHeader() {
+            $("header").pageHeader({
+                canReturn: false,
+                headerName: "高校列表",
+                action: function () {
+                    showActionSheet();
+                }
+            });
+        }
+
+        function initPageFooter() {
+            $("footer").pageFooter({
+                controls: [
+                    {
+                        text: "上一页",
+                        type: "button",
+                        click: function () {
+                            if (_universitys.isFirst()) return false;
+                            _universitys.prevPage();
+                            _universitys.load();
+                        }
+                    },
+                    {
+                        text: "下一页",
+                        type: "button",
+                        click: function () {
+                            if (_universitys.isLast()) return false;
+                            _universitys.nextPage();
+                            _universitys.load();
+                        }
+                    }
+                ]
+            });
+        }
+
+        function initProvinces() {
+            _provinces = new provinces();
+
+            var _province = new province();
+            _province.provinceId = 0;
+            _province.provinceName = "全部";
+            _provinces.add(_province.provinceId, _province);
+
+            _provinces.afterLoad = function () {
+                var _self = this;
+                document.getElementById("provincelist").appendChild(_self.listUI());
+            }
+            $("#provincelist").on("click", "label", function () {
+                _Dialogfilter.provinceId = $(this).data("provinceId");
+                $(this).addClass("current").siblings().removeClass("current");
+                _citys.filter.provinceId = _Dialogfilter.provinceId;
+                _citys.load();
+            });
+        }
+
+        function initCitys() {
+            _citys = new citys();
+
+            _citys.afterLoad = function () {
+                var _self = this;
+                document.getElementById("citylist").innerHTML = "";
+
+                var _city = new city();
+                _city.cityId = 0;
+                _city.cityName = "全部";
+                document.getElementById("citylist").appendChild(_city.listItemUI_label());
+                document.getElementById("citylist").appendChild(_self.listUI());
+
+                $("#citylist").find("label").each(function () {
+                    var cityId = $(this).data("cityId");
+                    if (cityId == _Dialogfilter.cityId) {
+                        $(this).addClass("current").siblings().removeClass("")
+                    }
+                });
+            }
+
+            $("#citylist").on("click", "label", function () {
+                _Dialogfilter.cityId = $(this).data("cityId");
+                $(this).addClass("current").siblings().removeClass("current");
+            });
+        }
+
+        function initFilterDialog() {
+            _Dialogfilter = {
+                provinceId: _universitys.filter.provinceId,
+                cityId: _universitys.filter.cityId
+            };
+
+            var _province = _provinces.getOne(_universitys.filter.provinceId);
+            $("#provincelist").find("label").each(function () {
+                var _provinceId = $(this).data("provinceId");
+                if (_provinceId == _province.provinceId) {
+                    $(this).addClass("current").siblings().removeClass("current");
+                }
+            });
+
+            _citys.filter.provinceId = _province.provinceId;
+            _citys.load();
+
+            showFilterDialog();
+        }
+
+        function initUniversitys() {
+            _universitys = new universitys();
+            _universitys.filter.provinceId = 0;
+            _universitys.filter.cityId = 0;
+            _universitys.filter.pageIndex = 1;
+            _universitys.filter.pageSize = 50;
+            _universitys.afterLoad = function () {
+                var _self = this;
+                document.getElementById("universitys").innerHTML = "";
+                document.getElementById("universitys").appendChild(_self.listUI());
+            }
+        }
+
+        
+
+        function showActionSheet() {
+            $("#menuactionsheet").addClass("show");
+        }
+
+        function hideActionSheet() {
+            $("#menuactionsheet").removeClass("show");
+        }
+
+        function showFilterDialog() {
+            $("#filterDialog").addClass("show");
+        }
+
+        function hideFilterDialog() {
+            $("#filterDialog").removeClass("show");
+        }
+
+        
+    </script>
+</body>
+</html>

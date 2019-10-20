@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/user.js"></script>
+</head>
+<body>
+    <header></header>
+    <footer></footer>
+    <section class="ui-container">
+        <ul class="ui-list" id="users"></ul>
+    </section>
+    <script>
+        var _users;
+        $(document).ready(function () {
+            pageInit();
+        });
+
+        function pageInit() {
+            initUsers();
+            initPageHeader();
+            initPageFooter();
+            _users.load();
+        }
+
+        function initPageHeader() {
+            $("header").pageHeader({
+                canReturn: true,
+                headerName: "用户管理",
+                action: function () {
+                    window.location.href = "/home/user/detail.html";
+                }
+            });
+        }
+
+        function initPageFooter() {
+            $("footer").pageFooter({
+                controls: [
+                    {
+                        type: "button",
+                        text: "上一页",
+                        click:function (e) {
+                            if (_users.isFirst()) {
+                                $.showErrorMessage("已经是首页");
+                                return;
+                            }
+                            _users.prePage();
+                            _users.load();
+                        }
+                    },
+                    {
+                        type: "button",
+                        text: "下一页",
+                        click:function (e) {
+                            if (_users.isLast()) {
+                                $.showErrorMessage("已经是最后一页");
+                                return;
+                            } 
+                            _users.nextPage();
+                            _users.load();
+                        }
+                    }
+                ]
+            });
+        }
+
+        function initUsers() {
+            _users = new users();
+            _users.filter.pageIndex = 1;
+            _users.filter.pageSize = 10;
+            _users.afterLoad = function () {
+                var _self = this;
+                document.getElementById("users").innerHTML = "";
+                document.getElementById("users").appendChild(_self.listUI());
+            }
+        }   
+    </script>
+</body>
+</html>

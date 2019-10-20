@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/hoursePrice.js"></script>
+    <script src="/Scripts/area.js"></script>
+</head>
+<body>
+    <header></header>
+    <footer></footer>
+    <section class="ui-container">
+        <form class="ui-form" id="hoursePriceForm">
+        </form>
+    </section>
+
+    <script>
+        var _hoursePrice;
+        var _areas;
+        $(document).ready(function () {
+            pageInit();
+        })
+
+        function pageInit() {
+            initPageHeader();
+            initPageFooter();
+            initAreas();
+            initHoursePrice();
+            $.when(_areas.load()).then(function () {
+                if (_hoursePrice.isNew()){
+                    document.getElementById("hoursePriceForm").appendChild(_hoursePrice.detailUI(_areas));
+                }  
+                else {
+                    _hoursePrice.load();
+                }
+            });
+        }
+
+        function initPageHeader() {
+            $("header").pageHeader({
+                canReturn: true,
+                headerName: "房价编辑"
+            });
+        }
+
+        function initPageFooter() {
+            $("footer").pageFooter({
+                controls: [
+                    {
+                        type: "button",
+                        text: "保存",
+                        click: function () {
+                            if (_hoursePrice.isNew()) {
+                                _hoursePrice.add();
+                            } else {
+                                _hoursePrice.update();
+                            }
+                        }
+                    }
+                ]
+            });
+        }
+
+        function initAreas() {
+            _areas = new areas();
+            _areas.filter.cityId = getCityId();
+            var _area = new area();
+            _area.areaId = 0;
+            _area.areaName = "请选择区域";
+            _areas.add(0, _area);
+        }
+
+        function initHoursePrice() {
+            _hoursePrice = new hoursePrice();
+            _hoursePrice.hoursePriceId = getHoursePriceId();
+            if (_hoursePrice.isNew()) {
+                _hoursePrice.afterAdd = function () {
+                    history.back();
+                }
+            } else {
+                _hoursePrice.afterLoad = function () {
+                    var _self = this;
+                    document.getElementById("hoursePriceForm").appendChild(_self.detailUI(_areas));
+                }
+                _hoursePrice.afterUpdate = function () {
+                    history.back();
+                }
+            }
+        }
+
+        function getHoursePriceId() {
+            var hoursePriceId = $.getQueryString("hoursePriceId");
+            if (hoursePriceId == null) {
+                return 0;
+            } else {
+                return parseInt(hoursePriceId);
+            }
+        }
+
+        function getCityId() {
+            var cityId = $.getQueryString("cityId");
+            if (cityId == null) {
+                return 0;
+            } else {
+                return parseInt(cityId);
+            }
+        }
+    </script>
+</body>
+</html>

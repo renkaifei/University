@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>软件帮助</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/handlebars.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/article.js"></script>
+</head>
+<body>
+    <header></header>
+    
+    <section class="ui-container">
+        <ul id="articles" class="ui-list">
+
+        </ul>
+        <div id="loadMore"></div>
+    </section>
+    
+    <script>
+        var _articles;
+        $(document).ready(function () {
+            pageInit();
+        });
+
+        function pageInit() {
+            initPageHeader();
+            initPageList();
+            initPageLoadMore();
+            initArticles();
+            _articles.load();
+        }
+
+        function initPageHeader() {
+            $("header").pageHeader({
+                canReturn: true,
+                headerName: "软文列表",
+                action: function () {
+                    window.location.href = "/home/soft/article/detail.html";
+                }
+            });
+        }
+
+        function initPageList() {
+            var _articleUI = new articleUI();
+            $("#articles").pageList({
+                itemTemplate: _articleUI.listItemUI,
+                events: {
+                    detail: function (e) {
+                        var target = e.target;
+                        var _article = $(target).data("article");
+                        window.location.href = "/home/soft/article/detail.html?articleId=" + _article.articleId;
+                    },
+                    del: function (e) {
+                        var target = e.target;
+                        var _article = $(target).data("article");
+                        _article.afterDelete = function () {
+                            var removeElem = $(target).data("removeElem");
+                            $(removeElem).remove();
+                        }
+                        _article.delete();
+                    }
+                }
+            });
+        }
+
+        function initPageLoadMore() {
+            $("#loadMore").pageMore({
+                show: false,
+                click: function () {
+                    _articles.filter.startNumber = _articles.filter.startNumber + _articles.filter.length - 1;
+                    _articles.load();
+                }
+            });
+        }
+
+        function initArticles() {
+            _articles = new articles();
+            _articles.filter.startNumber = 1;
+            _articles.filter.length = 50;
+            _articles.afterLoad = function () {
+                var _self = this;
+                $("#articles").pageList("append", _self.values);
+                if (_self.haveMore()) {
+                    $("#loadMore").pageMore("show",true);
+                } else {
+                    $("#loadMore").pageMore("show",false);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

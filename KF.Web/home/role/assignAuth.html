@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/role.js"></script>
+    <script src="/Scripts/resource.js"></script>
+    <script src="/Scripts/permission.js"></script>
+</head>
+<body>
+    <header></header>
+    <section class="ui-container">
+        <ul id="resources">
+
+        </ul>
+    </section>
+
+    <script id="roleTemplate" type="text/x-handlebars-template">
+        <section class="ui-panel ui-panel-center ui-border-tb">
+            <h2><span>角色:{{roleName}}</span></h2>
+        </section>
+    </script>
+
+    <script id="resourceTemplate" type="text/x-handlebars-template">
+        <li class="ui-border-tb">
+            <div class="ui-list-info">
+                <h3>{{resourceName}}</h3>
+                <p>
+                    <input type="checkbox" value="1" event="assignAuth" keycode="{{resourceId}}_1" />新建
+                    <input type="checkbox" value="2" event="assignAuth" keycode="{{resourceId}}_2" />查询
+                    <input type="checkbox" value="3" event="assignAuth" keycode="{{resourceId}}_3" />修改
+                    <input type="checkbox" value="4" event="assignAuth" keycode="{{resourceId}}_4" />删除
+                </p>
+            </div>
+        </li>
+    </script>
+
+    <script>
+        var _role;
+        var _resources;
+        var _permissions;
+        var _permission;
+        $(document).ready(function () {
+            pageInit();
+        });
+
+        function pageInit(){
+            initPageHeader();
+            initPageList();
+            initRole();
+            initResources();
+            initPermission();
+            initPermissions();
+
+            _role.load();
+            $.when(_resources.load(), _permissions.load()).then(function () {
+                var roleId = getRoleId();
+                $.each(_resources.values, function (i, item) {
+                    item.c = _permissions.hasPermission(roleId, item.resourceId, 1);
+                    item.r = _permissions.hasPermission(roleId, item.resourceId, 2);
+                    item.u = _permissions.hasPermission(roleId, item.resourceId, 3);
+                    item.d = _permissions.hasPermission(roleId, item.resourceId, 4);
+                });
+                $("#resources").pageList("append", _resources.values);
+                $("#resources").find("input:checkbox").each(function () {
+                    var checkbox = $(this);
+                    var keyCode = checkbox.attr("keycode");
+                    $.each(_permissions.values, function (i, item) {
+                        if (item.resourceId + "_" + item.permissionType == keyCode || item.resourceId + "_" + item.permissionType == keyCode
+                            || item.resourceId + "_" + item.permissionType == keyCode || item.resourceId + "_" + item.permissionType == keyCode) {
+                            checkbox.attr("checked", "checked");
+                        }
+                    });
+                });
+            });
+        }
+
+        function initPageHeader() {
+            $("header").pageHeader({
+                canReturn: true,
+                headerName: "权限设置"
+            });
+        }
+
+        function initRole() {
+            _role = new role();
+            _role.roleId = getRoleId();
+            _role.afterLoad = function () {
+                var _self = this;
+                var template = createTemplate("roleTemplate");
+                $("section.ui-container").prepend(template(_self));
+            }
+        }
+
+        function initResources() {
+            _resources = new resources();
+        }
+
+        function initPermissions() {
+            _permissions = new permissions();
+            _permissions.filter.roleId = getRoleId();
+        }
+
+        function initPermission() {
+            _permission = new permission();
+            _permission.roleId = getRoleId();
+        }
+
+        function initPageList() {
+            $("#resources").pageList({
+                itemTemplate: document.getElementById("resourceTemplate").innerHTML,
+                events: {
+                    assignAuth: function (obj) {
+                        _permission.resourceId = obj.data["resourceId"];
+                        var target = obj.target;
+                        _permission.permissionType = target.value;
+                        if (target.checked) {
+                            _permission.add();
+                        } else {
+                            _permission.delete();
+                        }
+                    }
+                }
+            })
+        }
+
+
+
+        function getRoleId() {
+            var roleId = $.getQueryString("roleId");
+            if (roleId == null) {
+                return 0;
+            } else {
+                return parseInt(roleId);
+            }
+        }
+    </script>
+</body>
+</html>

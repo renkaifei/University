@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>E:\KFProject\UniversityWeb</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/KF.Repo.dll">
+      <publishTime>08/02/2019 21:34:11</publishTime>
+    </File>
+    <File Include="bin/KF.UniversityWeb.dll">
+      <publishTime>08/02/2019 22:43:29</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>01/14/2019 21:50:30</publishTime>
+    </File>
+    <File Include="Content/base/fn.css">
+      <publishTime>07/31/2019 20:19:04</publishTime>
+    </File>
+    <File Include="Content/base/global.css">
+      <publishTime>07/31/2019 20:19:04</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-arrowlink.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-checkbox.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-close.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-corner.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-dialogclose.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-notice.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-searchbar.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-tag.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon-tips.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/icons/icon.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/mixins/mixin.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/mixins/rem.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/styles/reset.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/styles/type.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/variables/base.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/variables/component.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/base/variables/util.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/basic.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/common.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/actionsheet/actionsheet.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/button/btn-group.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/button/btn-progress.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/button/btn.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/decorate/badge.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/decorate/corner.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/decorate/reddot.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/decorate/subscript.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/decorate/tag.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/dialog/base.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/dialog/dialog-function.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/dialog/dialog-operate.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/dialog/dialog.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/feeds/feeds.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/form/checkbox.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/form/form.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/form/input.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/form/label.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/form/radio.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/form/select.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/form/switch.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/grid/grid-icon.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/grid/grid.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/list/list-avatar.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/list/list-function.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/list/list-thumb.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/list/list.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/loading/loading.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/notice/notice.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/panel/panel-center.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/panel/panel-pure.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/panel/panel.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/progress/progress.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/search/searchbar.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/slider/slider.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/tab/tab.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/table/table.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/tips/newstips.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/tips/poptips.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/tips/tips.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/tips/tooltips.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/vip/btn-vip.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/vip/icon-qq.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/vip/icon-qqlevel.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/vip/icon-viplevel.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/vip/tooltips-footer-vip.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/component/vip/tooltips-vip.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/font/glyphicons-halflings-regular.ttf">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/font/iconfont-full.ttf">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/frozenui.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/arrowlink.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/arrowlink_iconfont.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/avatar.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/border.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/col.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/flex.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/img.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/justify.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/layout.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/nowrap.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/placehold.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/util/whitespace.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Content/vip.css">
+      <publishTime>07/31/2019 20:19:05</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>07/31/2019 20:36:13</publishTime>
+    </File>
+    <File Include="Scripts/area.js">
+      <publishTime>08/02/2019 22:00:34</publishTime>
+    </File>
+    <File Include="Scripts/city.js">
+      <publishTime>07/31/2019 20:26:42</publishTime>
+    </File>
+    <File Include="Scripts/common.js">
+      <publishTime>08/02/2019 23:04:35</publishTime>
+    </File>
+    <File Include="Scripts/course.js">
+      <publishTime>07/31/2019 20:02:40</publishTime>
+    </File>
+    <File Include="Scripts/hoursePrice.js">
+      <publishTime>07/31/2019 20:02:40</publishTime>
+    </File>
+    <File Include="Scripts/major.js">
+      <publishTime>08/02/2019 22:54:05</publishTime>
+    </File>
+    <File Include="Scripts/modules/jquery-1.12.4.js">
+      <publishTime>07/31/2019 20:24:54</publishTime>
+    </File>
+    <File Include="Scripts/modules/page.js">
+      <publishTime>07/31/2019 20:04:09</publishTime>
+    </File>
+    <File Include="Scripts/province.js">
+      <publishTime>07/31/2019 20:27:16</publishTime>
+    </File>
+    <File Include="Scripts/scholarShip.js">
+      <publishTime>07/31/2019 20:02:40</publishTime>
+    </File>
+    <File Include="Scripts/university.js">
+      <publishTime>07/31/2019 20:28:18</publishTime>
+    </File>
+    <File Include="university/detail.html">
+      <publishTime>08/02/2019 22:37:21</publishTime>
+    </File>
+    <File Include="university/list.html">
+      <publishTime>07/31/2019 20:25:10</publishTime>
+    </File>
+    <File Include="university/major/detail.html">
+      <publishTime>07/28/2019 19:48:34</publishTime>
+    </File>
+    <File Include="university/scholarShip/detail.html">
+      <publishTime>07/28/2019 19:48:34</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>08/02/2019 22:43:30</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

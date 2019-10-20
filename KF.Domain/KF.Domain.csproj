@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BC151EB7-6666-476D-A68D-10B91815A7D6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KF.Domain</RootNamespace>
+    <AssemblyName>KF.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Interface\IAreaRepository.cs" />
+    <Compile Include="Interface\ICityRepository.cs" />
+    <Compile Include="Interface\ICompanyRepository.cs" />
+    <Compile Include="Interface\ICourseRepository.cs" />
+    <Compile Include="Interface\IEnrollmentPlanRepository.cs" />
+    <Compile Include="Interface\IHoursePriceRepository.cs" />
+    <Compile Include="Interface\IMajorCourseRepository.cs" />
+    <Compile Include="Interface\IMajorRepository.cs" />
+    <Compile Include="Interface\IProvinceRepository.cs" />
+    <Compile Include="Interface\IRecuritRepository.cs" />
+    <Compile Include="Interface\IRoleRepository.cs" />
+    <Compile Include="Interface\IScholarShipRepository.cs" />
+    <Compile Include="Interface\IUniversityRepository.cs" />
+    <Compile Include="Interface\IUserRepository.cs" />
+    <Compile Include="Model\Area.cs" />
+    <Compile Include="Model\Company.cs" />
+    <Compile Include="Model\CompanyRecruit.cs" />
+    <Compile Include="Model\Course.cs" />
+    <Compile Include="Model\EnrollmentPlan.cs" />
+    <Compile Include="Model\Entity.cs" />
+    <Compile Include="Interface\IError.cs" />
+    <Compile Include="Interface\IRepository.cs" />
+    <Compile Include="Model\City.cs" />
+    <Compile Include="Model\entityFactory.cs" />
+    <Compile Include="Model\HoursePrice.cs" />
+    <Compile Include="Model\Major.cs" />
+    <Compile Include="Model\MajorCourse.cs" />
+    <Compile Include="Model\Province.cs" />
+    <Compile Include="Model\Recurit.cs" />
+    <Compile Include="Model\Role.cs" />
+    <Compile Include="Model\ScholarShip.cs" />
+    <Compile Include="Model\University.cs" />
+    <Compile Include="Model\User.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

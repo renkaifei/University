@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>软件帮助</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/handlebars.js"></script>
+    <script src="/ckeditor/ckeditor.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/article.js"></script>
+</head>
+<body>
+    <header></header>
+    <footer></footer>
+
+    <section class="ui-container">
+        <form id="article">
+
+        </form>
+    </section>
+
+    <script>
+        var _article;
+        $(document).ready(function () {
+            pageInit();
+        });
+
+        function pageInit() {
+            initPageHeader();
+            initPageFooter();
+            initArticle();
+            if (!_article.isNew()) _article.load();
+        }
+
+        function initPageHeader() {
+            $("header").pageHeader({
+                canReturn: true,
+                headerName: "软文编辑"
+            });
+        }
+
+        function initPageFooter() {
+            $("footer").pageFooter({
+                controls: {
+                    btnOk: {
+                        text: "确定",
+                        type:"button",
+                        click: function () {
+                            _article.articleContent = CKEDITOR.instances.articleContent.getData();
+                            if (_article.isNew()) {
+                                _article.add();
+                            } else {
+                                _article.update();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initPageFormControls() {
+            $("#article").formControls({ value: _article })
+                .formControls("append", {
+                    articleTitle: {
+                        type: "text",
+                        label: "文章名称",
+                        field:"articleTitle"
+                    },
+                    author: {
+                        type: "text",
+                        label: "作者",
+                        field: "author"
+                    },
+                    articleType: {
+                        type: "select",
+                        label: "文章类型",
+                        field: "articleType",
+                        initValue: {
+                            values: [{ articleType: 1, articleTypeName: "文章" },
+                                { articleType:2,articleTypeName:"视频" }
+                            ],
+                            textField: "articleTypeName",
+                            valueField: "articleType"
+                        }
+                    },
+                    articleContent: {
+                        id:"articleContent",
+                        type: "editor",
+                        label: "文章内容",
+                        field: "articleContent"
+                    }
+                });
+        }
+
+        function initArticle() {
+            _article = new article();
+            _article.articleId = getArticleId();
+            if (_article.isNew()) {
+                _article.afterAdd = function () {
+                    history.back();
+                }
+                initPageFormControls();
+            } else {
+                _article.afterLoad = function () {
+                    initPageFormControls();
+                }
+                _article.afterUpdate = function () {
+                    history.back();
+                }
+            }
+            
+        }
+
+        function getArticleId() {
+            var articleId = $.getQueryString("articleId");
+            if (articleId == null) {
+                return 0;
+            } else {
+                return parseInt(articleId);
+            }
+        }
+    </script>
+</body>
+</html>

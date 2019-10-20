@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link href="/Content/frozenui.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+
+
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/user.js"></script>
+</head>
+<body>
+    <section class="ui-container">
+        <div class="ui-dialog show">
+            
+            <form class="ui-form ui-panel-center">
+                <h3>登录</h3>
+                <div class="ui-form-item ui-border-t">
+                    <label class="ui-border-r">用户名:</label>
+                    <input type="text" id="loginName" />
+                    <i class="ui-icon-close" id="btnClearLoginName"></i>
+                </div>
+                <div class="ui-form-item ui-border-t">
+                    <label class="ui-border-r">密码:</label>
+                    <input type="password" id="pwd" />
+                    <i class="ui-icon-close" id="btnClearPwd"></i>
+                </div>
+                <div>
+                    <input type="button" class="ui-btn-lg ui-btn-primary" value="登陆" id="btnSubmit" />
+                </div>
+            </form>
+        </div>
+        
+    </section>
+    <script>
+
+        $(document).ready(function () {
+            $("#btnClearLoginName").click(function(){
+                $("#loginName").val("");
+            });
+
+            $("#btnClearPwd").click(function(){
+                $("#pwd").val("");
+            });
+
+            $("#btnSubmit").click(function () {
+                var _user = new user();
+                _user.loginName = $("#loginName").val();
+                _user.pwd = $("#pwd").val();
+                _user.afterLogin = function () {
+                    window.location.href = "/home/index.html";
+                }
+                _user.login();
+            })
+        })
+    </script>
+</body>
+</html>
