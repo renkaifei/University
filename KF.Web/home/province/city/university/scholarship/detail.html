@@ -12,12 +12,15 @@
     <link href="/Content/frozenui.css" rel="stylesheet" />
     <link href="/Content/common.css" rel="stylesheet" />
 
-    <script src="/Scripts/jquery-1.12.4.js"></script>
-    <script src="/Scripts/common.js"></script>
-    <script src="/Scripts/modules/page.js"></script>
+    <script src="/Scripts/Libraries/jquery-1.12.4.min.js"></script>
     <script src="/ckeditor/ckeditor.js"></script>
-    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/Framework/util.js"></script>
+    <script src="/Scripts/Framework/Components/base.js"></script>
+    <script src="/Scripts/Framework/Components/formItem_text.js"></script> 
+    <script src="/Scripts/Framework/Components/icon_return.js"></script>
+
     <script src="/Scripts/scholarship.js"></script>
+    <script src="/Scripts/Framework/modules/scholarshipDetail.js"></script>
 </head>
 <body>
     <header></header>
@@ -30,95 +33,9 @@
     </section>
 
     <script>
-        var _scholarShip;
-        var _university;
         $(document).ready(function () {
             pageInit();
         });
-
-        function pageInit() {
-            initPageHeader();
-            initPageFooter();
-            initScholarShip();
-
-            if (_scholarShip.isNew()) {
-                document.getElementById("scholarShip").innerHTML = "";
-                document.getElementById("scholarShip").appendChild(_scholarShip.detailUI());
-                CKEDITOR.replace("scholarShipAbstract");
-                CKEDITOR.instances.scholarShipAbstract.setData(_scholarShip.scholarShipAbstract);
-            } else {
-                _scholarShip.load();
-            }
-        }
-
-        function initPageHeader() {
-            $("header").pageHeader({
-                canReturn: true,
-                headerName:"奖学金"
-            });
-        }
-
-        function initPageFooter() {
-            $("footer").pageFooter({
-                controls: {
-                    btnOk: {
-                        text: "确定",
-                        type: "button",
-                        click: function () {
-                            _scholarShip.scholarShipAbstract = CKEDITOR.instances.scholarShipAbstract.getData();
-                            if (!_scholarShip.validate()) return;
-                            if (_scholarShip.isNew()) {
-                                _scholarShip.add();
-                            } else {
-                                _scholarShip.update();
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function initScholarShip() {
-            _scholarShip = new scholarShip();
-            _scholarShip.scholarShipId = getScholarShipId();
-            _scholarShip.universityId = getUniversityId();
-
-            if (_scholarShip.isNew()) {
-                _scholarShip.afterAdd = function () {
-                    history.back();
-                }
-
-            } else {
-                _scholarShip.afterLoad = function () {
-                    var _self = this;
-                    document.getElementById("scholarShip").innerHTML = "";
-                    document.getElementById("scholarShip").appendChild(_self.detailUI());
-                    CKEDITOR.replace("scholarShipAbstract");
-                    CKEDITOR.instances.scholarShipAbstract.setData(_self.scholarShipAbstract);
-                }
-                _scholarShip.afterUpdate = function () {
-                    history.back();
-                }
-            }
-        }
-
-        function getUniversityId() {
-            var universityId = $.getQueryString("universityId");
-            if (universityId == null) {
-                return 0;
-            } else {
-                return parseInt(universityId);
-            }
-        }
-
-        function getScholarShipId() {
-            var scholarShipId = $.getQueryString("scholarShipId");
-            if (scholarShipId == null) {
-                return 0;
-            } else {
-                return parseInt(scholarShipId);
-            }
-        }
     </script>
 </body>
 </html>

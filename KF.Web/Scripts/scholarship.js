@@ -114,19 +114,6 @@ scholarShip.prototype.delete = function () {
 
 scholarShip.prototype.afterDelete = function () { }
 
-scholarShip.prototype.detailUI = function() {
-    var _self = this;
-    var fragment = document.createDocumentFragment();
-
-    fragment.appendChild(formItem_text({ label: "名称", value: _self, fieldName: "scholarShipName" }));
-    fragment.appendChild(formItem_text({ label: "总金额", value: _self, fieldName: "scholarShipTotal" }));
-    fragment.appendChild(formItem_text({ label: "开始年份", value: _self, fieldName: "startYear" }));
-    fragment.appendChild(formItem_text({ label: "结束年份", value: _self, fieldName: "endYear" }));
-    fragment.appendChild(formItem_editor({ label: "简介", id: "scholarShipAbstract" }))
-    
-    return fragment;
-}
-
 function scholarShips() {
     kf.util.entitiesPage.call(this);
 }
@@ -144,9 +131,8 @@ scholarShips.prototype.load = function () {
             pageSize:_self.filter.pageSize
         },
         success: function (ret) {
-            _self.totalCount = ret.TotalCount;
             _self.clear();
-            $.each(ret.Values, function (i, item) {
+            $.each(ret, function (i, item) {
                 var _scholarship = new scholarShip();
                 _scholarship.scholarShipId = item.ScholarShipId;
                 _scholarship.scholarShipName = item.ScholarShipName;

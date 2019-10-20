@@ -23,7 +23,7 @@ namespace KF.Domain.Model
             if (filter.ContainsKey("scholarShipAbstract")) ScholarShipAbstract = filter["scholarShipAbstract"];
             if (filter.ContainsKey("scholarShipTotal")) ScholarShipTotal = int.Parse(filter["scholarShipTotal"]);
             if (filter.ContainsKey("universityId")) UniversityId = int.Parse(filter["universityId"]);
-            if (filter.ContainsKey("StartYear")) StartYear = int.Parse(filter["startYear"]);
+            if (filter.ContainsKey("startYear")) StartYear = int.Parse(filter["startYear"]);
             if (filter.ContainsKey("endYear")) EndYear = int.Parse(filter["endYear"]);
         }
     }
