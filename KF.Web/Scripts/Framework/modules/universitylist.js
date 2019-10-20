@@ -82,6 +82,13 @@ function initUniversitys() {
             })
             div_operation.appendChild(a_enrollmentPlans);
 
+            var a_scholarships = kf.base.aUI({
+                className:"ui-label-s",
+                text:"奖学金",
+                href:"/home/province/city/university/scholarship/list.html?universityId=" + value.universityId
+            });
+            div_operation.appendChild(a_scholarships);
+
             fragment.appendChild(div_list_info.export());
         });
 
