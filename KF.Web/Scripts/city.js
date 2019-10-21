@@ -4,88 +4,56 @@
 function city() {
     this.cityId = 0;
     this.cityName = "";
+    this.loadObservers = [];
 }
 
 city.prototype.load = function () {
-    var _self = this;
     $.ajax({
         url: "/cityService",
         data: {
-            cityId: _self.cityId,
-            option:"getone"
+            cityId: this.cityId,
+            option: "getone"
         },
-        success: function (ret) {
-            _self.cityName = ret.CityName;
-            _self.afterLoad();
-        }
-    })
-}
-
-city.prototype.afterLoad = function () {
-    
-}
-
-city.prototype.listItemUI = function () {
-    var _self = this;
-    var li = liUI();
-
-    var div_list_info = list_infoUI();
-    li.appendChild(div_list_info);
-
-    var p_cityName = pUI({ text:_self.cityName });
-    div_list_info.appendChild(p_cityName);
-
-    var div_operation = operationUI({
-        university: {
-            text: "高校",
-            click: function () {
-                window.location.href = "/home/province/city/university/list.html?cityId=" + _self.cityId;
+        success: $.proxy(function (ret) {
+            this.cityName = ret.CityName;
+            var count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this);
             }
-        },
-        hoursePrice: {
-            text: "房价",
-            click: function () {
-                window.location.href = "/home/province/city/hoursePrice/list.html?cityId=" + _self.cityId;
-            }
-        },
-        company: {
-            text: "单位",
-            click: function () {
-                window.location.href = "/home/province/city/company/list.html?cityId=" + _self.cityId;
-            }
-        }
+        }, this)
     });
-    div_list_info.appendChild(div_operation);
-
-    return li;
 }
 
 function citys() {
     kf.util.entities.call(this);
+    this.loadObservers = [];
 }
 
 $.extend(citys.prototype, kf.util.entities.prototype);
 
 citys.prototype.load = function () {
-    var _self = this;
     return $.ajax({
         url: "/cityService",
         data: {
             option:"getlist",
-            provinceId: _self.filter.provinceId
+            provinceId: this.filter.provinceId
         },
-        success: function (ret) {
-            $.each(ret, function (i, item) {
+        success: $.proxy(function (ret) {
+            var count = ret.length;
+            for (var i = 0; i < count; i++) {
                 var _city = new city();
-                _city.cityId = item.CityId;
-                _city.cityName = item.CityName;
-                _self.add(_city.cityId,_city);
-            });
-            _self.afterLoad();
-        }
+                _city.cityId = ret[i].CityId;
+                _city.cityName = ret[i].CityName;
+                this.add(_city.cityId, _city);
+            }
+            count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this.values);
+            }
+        },this)
     });
 }
 
-citys.prototype.afterLoad = function () {
-
+citys.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }
