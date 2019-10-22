@@ -24,6 +24,10 @@ city.prototype.load = function () {
     });
 }
 
+city.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
+}
+
 function citys() {
     kf.util.entities.call(this);
     this.loadObservers = [];
