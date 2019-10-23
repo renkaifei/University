@@ -34,6 +34,13 @@ var kf = (function (kf,$) {
         _self.root.appendChild(_self.btnSearch.export());
     }
 
+    searchBox.prototype.searchHandler = function (eventHander) {
+        this.btnSearch.addClickObserver($.proxy(function () {
+            var value = this.textbox.getValue();
+            eventHander(value);
+        },this));
+    }
+
     searchBox.prototype.export = function () {
         var _self = this;
         return _self.root;

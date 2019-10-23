@@ -5,18 +5,18 @@
 
 
 
-var kf = (function (kf,$) {
+var kf = (function (kf, $) {
 
     var components = kf.components = kf.components || {};
 
     var dialog = components.dialog = function () {
-        this.root = kf.base.divUI({ className:"ui-dialog" });
+        this.root = kf.base.divUI({ className: "ui-dialog" });
         this.dialog_cnt = kf.base.divUI({ className: "dialog-cnt" });
         this.root.appendChild(this.dialog_cnt);
 
         this.header = kf.base.divUI({ className: "ui-dialog-hd" });
         this.dialog_cnt.appendChild(this.header);
-        
+
         this.title = kf.base.spanUI()
         this.header.appendChild(this.title);
 
@@ -36,10 +36,10 @@ var kf = (function (kf,$) {
             text: "取消",
             click: $.proxy(function () {
                 this.hide();
-            },this)
+            }, this)
         });
         this.footer.appendChild(this.btnCancel.export());
-        
+
     }
 
     dialog.prototype.okHandler = function (eventHandler) {
@@ -64,17 +64,32 @@ var kf = (function (kf,$) {
 
 })(window.kf || {}, jQuery);
 
-var kf = (function (kf,$) {
+var kf = (function (kf, $) {
     var components = kf.components = kf.components || {};
 
     var gridDialog = components.gridDialog = function (option) {
+        option = option || {};
+
         this.dialog = new kf.components.dialog();
 
-        this.searchBox = new kf.components.searchBox({ click: option.searchHandler });
+        this.searchBox = new kf.components.searchBox();
         this.dialog.body.appendChild(this.searchBox.export())
 
         this.grid = new kf.components.grid();
         this.dialog.body.appendChild(this.grid.export());
+        this.btnPrePage = new kf.base.buttonUI({
+            text: "上一页",
+        });
+        this.btnNextPage = new kf.base.buttonUI({
+            text: "下一页",
+        });
+        if (option.showPage) {
+            $(this.btnPrePage).show();
+            $(this.btnNextPage).show();
+        } else {
+            $(this.btnPrePage).hide();
+            $(this.btnNextPage).hide();
+        }
     }
 
     gridDialog.prototype.setTitle = function (title) {
@@ -122,7 +137,19 @@ var kf = (function (kf,$) {
         this.grid.clearRows();
     }
 
+    gridDialog.prototype.searchHandler = function (eventHandler) {
+        this.searchBox.searchHandler(eventHandler);
+    }
+
+    gridDialog.prototype.prePage = function (eventHandler) {
+        this.btnPrePage.addClickObserver(eventHandler);
+    }
+
+    gridDialog.prototype.nextPage = function (eventHandler) {
+        this.btnNextPage.addClickObserver(eventHandler);
+    }
+
     return kf;
 
 
-})(window.kf || {},jQuery);
+})(window.kf || {}, jQuery);

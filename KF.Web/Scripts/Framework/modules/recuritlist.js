@@ -3,6 +3,7 @@
 /// <reference path="../Components/base.js" />
 /// <reference path="../Components/div_list_info.js" />
 /// <reference path="../Components/base.js" />
+/// <reference path="../Components/icon_return.js" />
 /// <reference path="../Components/dialog.js" />
 /// <reference path="../../company.js" />
 /// <reference path="../../recurit.js" />
@@ -17,7 +18,7 @@ function pageInit() {
     initYears();
     initUniversitys();
     initRecurits();
-    universityGridDialog();
+    initUniversityGridDialog();
     majorsGridDialog();
     initMajors();
 
@@ -46,6 +47,7 @@ function pageInit() {
     });
 
     _universitys.filter.companyId = getCompanyId();
+
     _universitys.filter.year = getYear();
     $.when(_universitys.getlistInRecurit()).then(function () {
         $("#universitys").find("label:nth-child(1)").addClass("current");
@@ -56,9 +58,26 @@ function pageInit() {
 function initCompany() {
     _company = new company();
     _company.companyId = getCompanyId();
-    _company.afterLoad = function () {
-        initPageHeader();
-    }
+    _company.addLoadObserver(initPageHeader);
+}
+
+function initPageHeader(value) {
+    var header = document.getElementsByTagName("header")[0];
+    $(header).addClass("ui-header ui-header-positive");
+    var i = new kf.components.icon_return();
+    header.appendChild(i);
+
+    var h1 = kf.base.h1UI({ text: value.companyName + " 招聘" });
+    header.appendChild(h1);
+
+    var btnRight = new kf.base.buttonUI({
+        className: "ui-btn",
+        text: "...",
+        click: function () {
+            window.location.href = "/home/province/city/company/recurit/detail.html?companyId=" + _company.companyId;
+        }
+    });
+    header.appendChild(btnRight.export());
 }
 
 function initYears() {
@@ -72,30 +91,6 @@ function initYears() {
     var label_next_year = kf.base.labelUI({ text: year + 1,className:"ui-label" });
     fragment.appendChild(label_next_year);
     document.getElementById("years").appendChild(fragment);
-}
-
-function initPageHeader() {
-    var header = document.getElementsByTagName("header")[0];
-    $(header).addClass("ui-header ui-header-positive");
-    var i = kf.base.iUI({
-        className: "ui-icon-return",
-        click: function () {
-            history.back();
-        }
-    });
-    header.appendChild(i);
-
-    var h1 = kf.base.h1UI({ text: _company.companyName + "招聘" });
-    header.appendChild(h1);
-
-    var btnRight = kf.base.buttonUI({
-        className: "ui-btn",
-        text: "...",
-        click: function () {
-            window.location.href = "/home/province/city/company/recurit/detail.html?companyId=" + _company.companyId;
-        }
-    });
-    header.appendChild(btnRight);
 }
 
 function initRecurits() {
@@ -141,23 +136,21 @@ function initUniversitys() {
     }
 }
 
-function universityGridDialog() {
+function initUniversityGridDialog() {
     var columns = [{ name: "universityName", headerName: "高校名称" }];
-    _universityGridDialog = new kf.components.gridDialog();
+    _universityGridDialog = new kf.components.gridDialog({
+        showPage:true
+    });
     _universityGridDialog.setTitle("高校选择");
     _universityGridDialog.initHeader(columns);
+    _universityGridDialog.searchHandler(function (universityName) {
+        _universitys.load();
+    });
     _universityGridDialog.okHandler(function (value) {
         if ($("#universitys").find("label[universityId='" + value.universityId + "']").length > 0) return;
         var label_University = kf.base.labelUI({ className: "ui-label", text: value.universityName });
         $(label_University).attr("universityId", value.universityId);
         document.getElementById("universitys").appendChild(label_University);
-    });
-
-    _universityGridDialog.searchHandler(function (universityName) {
-        _universitys.filter.pageIndex = 1;
-        _universitys.filter.pageSize = 50;
-        _universitys.filter.universityName = universityName;
-        _universitys.load();
     });
 
     _universityGridDialog.prePage(function () {
@@ -258,6 +251,7 @@ function getYear() {
 
 function getMajorInRecurit() {
     var universityId = $("#universitys").find("label.current").attr("universityId");
+    if (universityId == undefined) return;
     var year = $("#years").find("label.current").text();
 
     _majors.filter.universityId = universityId;

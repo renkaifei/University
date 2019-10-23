@@ -7,6 +7,11 @@ function company() {
     this.companyAddress = "";
     this.companyAbstract = "";
     this.cityId = 0;
+
+    this.loadObservers = [];
+    this.createObservers = [];
+    this.updateObservers = [];
+    this.deleteObservers = [];
 }
 
 company.prototype.validate = function () {
@@ -18,101 +23,115 @@ company.prototype.validate = function () {
 }
 
 company.prototype.add = function () {
-    var _self = this;
+    var data = $.strToUTF8(this.companyAbstract).join(",");
     $.ajax({
         url: "/companyService",
         data: {
-            companyName: _self.companyName,
-            companyAddress: _self.companyAddress,
-            companyAbstract: _self.companyAbstract,
-            cityId: _self.cityId,
+            companyName: this.companyName,
+            companyAddress: this.companyAddress,
+            companyAbstract: data,
+            cityId: this.cityId,
             option:"add"
         },
-        success: function (ret) {
-            _self.cityId = ret["CityId"];
-            _self.companyId = ret["CompanyId"];
-            _self.companyName = ret["CompanyName"];
-            _self.companyAddress = ret["CompanyAddress"];
-            _self.companyAbstract = ret["CompanyAbstract"];
-            _self.cityId = ret["CityId"];
-            _self.afterAdd();
-        }
+        success: $.proxy(function (ret) {
+            this.cityId = ret["CityId"];
+            this.companyId = ret["CompanyId"];
+            this.companyName = ret["CompanyName"];
+            this.companyAddress = ret["CompanyAddress"];
+            this.companyAbstract = ret["CompanyAbstract"];
+            this.cityId = ret["CityId"];
+            
+            var count = this.createObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.createObservers[i](this);
+            }
+        },this)
     });
 }
 
-company.prototype.afterAdd = function () {
-
+company.prototype.addCreateObserver = function (observer) {
+    this.createObservers.push(observer);
 }
 
 company.prototype.update = function () {
-    var _self = this;
+    var data = $.strToUTF8(this.companyAbstract).join(",");
     $.ajax({
         url: "/companyService",
         data: {
-            companyName: _self.companyName,
-            companyAddress: _self.companyAddress,
-            companyAbstract: _self.companyAbstract,
-            cityId: _self.cityId,
-            companyId:_self.companyId,
+            companyName: this.companyName,
+            companyAddress: this.companyAddress,
+            companyAbstract: data,
+            cityId: this.cityId,
+            companyId: this.companyId,
             option:"update"
         },
-        success: function (ret) {
-            _self.cityId = ret["CityId"];
-            _self.companyId = ret["CompanyId"];
-            _self.companyName = ret["CompanyName"];
-            _self.companyAddress = ret["CompanyAddress"];
-            _self.companyAbstract = ret["CompanyAbstract"];
-            _self.cityId = ret["CityId"];
-            _self.afterUpdate();
-        }
+        success: $.proxy(function (ret) {
+            this.cityId = ret["CityId"];
+            this.companyId = ret["CompanyId"];
+            this.companyName = ret["CompanyName"];
+            this.companyAddress = ret["CompanyAddress"];
+            this.companyAbstract = ret["CompanyAbstract"];
+            this.cityId = ret["CityId"];
+            
+            var count = this.updateObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.updateObservers[i](this);
+            }
+
+        },this)
     });
 }
 
-company.prototype.afterUpdate = function () {
-
+company.prototype.addUpdateObserver = function (observer) {
+    this.updateObservers.push(observer);
 }
 
 company.prototype.delete = function () {
-    var _self = this;
     $.ajax({
         url: "/companyService",
         data: {
-            companyId: _self.companyId,
+            companyId: this.companyId,
             option: "delete"
         },
-        success: function (ret) {
-            _self.afterDelete();
-        }
+        success: $.proxy(function () {
+            var count = this.deleteObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.deleteObservers[i](this);
+            }
+        })
     });
 }
 
-company.prototype.afterDelete = function () {
-
+company.prototype.addDeleteObserver = function (observer) {
+    this.deleteObservers.push(observer);
 }
 
 company.prototype.load = function () {
-    var _self = this;
     $.ajax({
         url: "/companyService",
         data: {
-            companyId: _self.companyId,
+            companyId: this.companyId,
             option: "getone"
         },
-        success: function (ret) {
-            _self.cityId = ret["CityId"];
-            _self.companyId = ret["CompanyId"];
-            _self.companyName = ret["CompanyName"];
-            _self.companyAddress = ret["CompanyAddress"];
+        success: $.proxy(function (ret) {
+            this.cityId = ret["CityId"];
+            this.companyId = ret["CompanyId"];
+            this.companyName = ret["CompanyName"];
+            this.companyAddress = ret["CompanyAddress"];
             var companyAbstract = ret["CompanyAbstract"];
-            _self.companyAbstract = $.decodeUTF8(companyAbstract);
-            _self.cityId = ret["CityId"];
-            _self.afterLoad();
-        }
+            this.companyAbstract = $.decodeUTF8(companyAbstract);
+            this.cityId = ret["CityId"];
+            
+            var count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this);
+            }
+        },this)
     });
 }
 
-company.prototype.afterLoad = function () {
-
+company.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }
 
 company.prototype.isNew = function () {
@@ -121,34 +140,38 @@ company.prototype.isNew = function () {
 
 function companys() {
     kf.util.entitiesPage.call(this);
+    this.loadObservers = [];
 }
 
 $.extend(companys.prototype, kf.util.entitiesPage.prototype);
 
 companys.prototype.load = function () {
-    var _self = this;
     $.ajax({
         url: "/companyService",
         data: {
-            pageIndex: _self.filter.pageIndex,
-            pageSize: _self.filter.pageSize,
+            pageIndex: this.filter.pageIndex,
+            pageSize: this.filter.pageSize,
             option:"getlist"
         },
-        success: function (ret) {
-            _self.clear();
-            $.each(ret, function (i, item) {
+        success: $.proxy(function (ret) {
+            this.clear();
+            var count = ret.length;
+            for (var i = 0; i < count; i++) {
                 var _company = new company();
-                _company.companyId = item.CompanyId;
-                _company.companyName = item.CompanyName;
-                _company.companyAddress = item.CompanyAddress;
-                _self.add(_company.CompanyId, _company);
-            });
-            _self.afterLoad();
-        }
+                _company.companyId = ret[i].CompanyId;
+                _company.companyName = ret[i].CompanyName;
+                _company.companyAddress = ret[i].CompanyAddress;
+                this.add(_company.companyId, _company);
+            }
+            
+            count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this.values);
+            }
+        }, this)
     });
 }
 
-companys.prototype.afterLoad = function () {
-
+companys.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }
-
