@@ -2,66 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using KF.Web.Common;
-using KF.Repo.Entities;
-using KF.Repo;
+using KF.Domain.Model;
+using KF.Domain.Interface;
+using KF.Repository;
 
 namespace KF.UniversityWeb.Handlers
 {
-    public class CityHandler:IHttpHandler
+    public class CityHandler:BaseHandler
     {
-
-        private ContextHelper Helper { get; set; }
-
-        public void ProcessRequest(HttpContext context)
+        protected override void CustomProcessRequest()
         {
-            Helper = new ContextHelper(context);
-
-            string option = Helper.GetParameterFromRequest("option").ToLower();
-            if (option == "getlist")
+            var option = Helper.GetParameterFromRequest("option").ToLower();
+            if (option.Equals("getlist"))
             {
-                GetList();  
-            }
-            else if (option == "getone")
-            {
-                GetOne();
+                GetList();
             }
         }
 
         private void GetList()
         {
-            Citys citys = new Citys();
-            CitysRepo Repo = new CitysRepo(citys);
             int provinceId = int.Parse(Helper.GetParameterFromRequest("provinceId"));
-            if (Repo.Query(provinceId))
+            ICityRepository Repo = new CityRepository();
+            Entities entities;
+            if (provinceId == 0)
             {
-                Helper.Response(citys.Serialize());
+                entities = Repo.GetList();
             }
             else
             {
-                Helper.ResponseError(Repo.ErrorMessage);
+                entities = Repo.GetList(provinceId);
             }
-        }
-
-        private void GetOne()
-        {
-            City city = new City();
-            city.CityId = int.Parse(Helper.GetParameterFromRequest("cityId"));
-            CityRepo Repo = new CityRepo(city);
-            if (Repo.Query())
+            IError error = Repo as IError;
+            if (string.IsNullOrEmpty(error.ErrorMessage))
             {
-                Helper.Response(city.Serialize());
+                Helper.Response(entities.Serialize());
             }
             else
             {
-                Helper.ResponseError(Repo.ErrorMessage);
+                Helper.ResponseError(error.ErrorMessage);
             }
-
-        }
-
-        public bool IsReusable
-        {
-            get { return false; }
         }
     }
 }

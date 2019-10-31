@@ -8,6 +8,7 @@ var kf = (function (kf, $) {
         var span = document.createElement("span");
         $(span).text(option.text);
         if (option.click) $(span).click(option.click);
+        if (option.className) $(span).addClass(option.className);
         return span;
     }
 
@@ -91,6 +92,13 @@ var kf = (function (kf, $) {
         var h1 = document.createElement("h1");
         if (option.text) $(h1).text(option.text);
         return h1;
+    }
+
+    base.h2UI = function (option) {
+        option = option || {};
+        var h2 = document.createElement("h2");
+        if (option.text) $(h2).text(option.text);
+        return h2;
     }
 
     base.ulUI = function () {

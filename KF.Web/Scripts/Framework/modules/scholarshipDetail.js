@@ -4,7 +4,7 @@ function pageInit(){
     initPageFooter();
     initScholarship();
     if(_scholarship.isNew()){
-        showScholarship();
+        showScholarshipUI(_scholarship);
     }else{
         _scholarship.load();
     }
@@ -45,54 +45,48 @@ function initScholarship(){
     _scholarship.scholarShipId = getScholarshipId();
     _scholarship.universityId = getUniversityId();
     if(_scholarship.isNew()){
-        _scholarship.afterAdd = function(){
-            history.back();
-        };
+        _scholarship.addCreateObserver($.goback);
     }else{
-        _scholarship.afterLoad = function(){
-            showScholarship();
-        };
-        _scholarship.afterUpdate = function(){
-            history.back();
-        }
+        _scholarship.addLoadObserver(showScholarshipUI);
+        _scholarship.addUpdateObserver($.goback);
     }
 }
 
-function showScholarship(){
+function showScholarshipUI(value){
     var fragment = document.createDocumentFragment();
     
     var formItem_ScholarshipName = new kf.components.formItem_text({
         label:"奖学金名称",
-        value: _scholarship.scholarShipName,
-        change:function(value){
-            _scholarship.scholarShipName = value;
+        value: value.scholarShipName,
+        change: function (scholarShipName) {
+            value.scholarShipName = scholarShipName;
         }
     });
     fragment.appendChild(formItem_ScholarshipName.export());
 
     var formItem_ScholarshipTotal = new kf.components.formItem_text({
         label:"奖学金金额",
-        value: _scholarship.scholarShipTotal,
-        change:function(value){
-            _scholarship.scholarShipTotal = value;
+        value: value.scholarShipTotal,
+        change: function (scholarShipTotal) {
+            value.scholarShipTotal = scholarShipTotal;
         }
     });
     fragment.appendChild(formItem_ScholarshipTotal.export());
 
     var formItem_startYear = new kf.components.formItem_text({
         label:"起始年份",
-        value: _scholarship.startYear,
-        change:function(value){
-            _scholarship.startYear = value;
+        value: value.startYear,
+        change: function (startYear) {
+            value.startYear = startYear;
         }
     });
     fragment.appendChild(formItem_startYear.export());
 
     var formItem_endYear = new kf.components.formItem_text({
         label:"结束年份",
-        value:_scholarship.endYear,
-        change:function(value){
-            _scholarship.endYear = value;
+        value:value.endYear,
+        change: function (endYear) {
+            value.endYear = endYear;
         }
     });
     fragment.appendChild(formItem_endYear.export());
@@ -107,7 +101,7 @@ function showScholarship(){
     document.getElementById("scholarShip").appendChild(fragment);
 
     CKEDITOR.replace("scholarShipAbstract");
-    CKEDITOR.instances.scholarShipAbstract.setData(_scholarship.scholarShipAbstract);
+    CKEDITOR.instances.scholarShipAbstract.setData(value.scholarShipAbstract);
 
     
 }

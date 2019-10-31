@@ -13,16 +13,20 @@ function enrollmentPlan() {
     this.majorCode = "";
     this.tuition = 0;
     this.planType = 0;
+
+    this.loadObservers = [];
+    this.createObservers = [];
+    this.updateObservers = [];
+    this.deleteObservers = [];
 }
 
 enrollmentPlan.prototype.validate = function () {
-    var _self = this;
     var reg = new RegExp("^\\d{4}$");
-    if (!reg.test(_self.year)) {
+    if (!reg.test(this.year)) {
         $.showErrorMessage("日期格式不正确,正确格式为[1900]");
         return false;
     }
-    if (!$.isNumeric(_self.planNumber)) {
+    if (!$.isNumeric(this.planNumber)) {
         $.showErrorMessage("招生计划数应为数字");
         return false;
     }
@@ -34,103 +38,114 @@ enrollmentPlan.prototype.isNew = function () {
 }
 
 enrollmentPlan.prototype.load = function () {
-    var _self = this;
     return $.ajax({
         url: "/enrollmentPlanService",
         data: {
-            enrollmentPlanId: _self.enrollmentPlanId,
+            enrollmentPlanId: this.enrollmentPlanId,
             option:"getone"
         },
-        success: function (ret) {
-            _self.enrollmentPlanId = ret.EnrollmentPlanId;
-            _self.year = ret.Year;
-            _self.provinceId = ret.ProvinceId;
-            _self.universityId = ret.UniversityId;
-            _self.planNumber = ret.PlanNumber;
-            _self.discipline = ret.Discipline;
-            _self.tuition = ret.Tuition;
-            _self.majorName = ret.MajorName;
-            _self.majorCode = ret.MajorCode;
-            _self.planType = ret.PlanType;
-            _self.afterLoad();
-        }
+        success: $.proxy(function (ret) {
+            this.enrollmentPlanId = ret.EnrollmentPlanId;
+            this.year = ret.Year;
+            this.provinceId = ret.ProvinceId;
+            this.universityId = ret.UniversityId;
+            this.planNumber = ret.PlanNumber;
+            this.discipline = ret.Discipline;
+            this.tuition = ret.Tuition;
+            this.majorName = ret.MajorName;
+            this.majorCode = ret.MajorCode;
+            this.planType = ret.PlanType;
+            
+            var count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this);
+            }
+
+        },this)
     })
 };
 
-enrollmentPlan.prototype.afterLoad = function () {
-
+enrollmentPlan.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 };
 
 enrollmentPlan.prototype.add = function () {
-    var _self = this;
     $.ajax({
         url: "/enrollmentPlanService",
         data: {
-            year: _self.year,
-            provinceId: _self.provinceId,
-            universityId: _self.universityId,
-            planNumber: _self.planNumber,
-            discipline: _self.discipline,
-            tuition: _self.tuition,
-            majorName: _self.majorName,
-            majorCode: _self.majorCode,
-            planType:_self.planType,
+            year: this.year,
+            provinceId: this.provinceId,
+            universityId: this.universityId,
+            planNumber: this.planNumber,
+            discipline: this.discipline,
+            tuition: this.tuition,
+            majorName: this.majorName,
+            majorCode: this.majorCode,
+            planType: this.planType,
             option:"add"
         },
-        success: function (ret) {
-            _self.afterAdd();
-        }
+        success: $.proxy(function (ret) {
+            var count = this.createObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.createObservers[i](this);
+            }
+        },this)
     });
 }
 
-enrollmentPlan.prototype.afterAdd = function () {
-    
+enrollmentPlan.prototype.addCreateObserver = function (observer) {
+    this.createObservers.push(observer);
 }
 
 enrollmentPlan.prototype.update = function () {
-    var _self = this;
     $.ajax({
         url: "/enrollmentPlanService",
         data:{
-            enrollmentPlanId: _self.enrollmentPlanId,
-            year: _self.year,
-            planNumber: _self.planNumber,
-            universityId: _self.universityId,
-            provinceId: _self.provinceId,
-            discipline: _self.discipline,
-            tuition: _self.tuition,
-            majorName: _self.majorName,
-            majorCode: _self.majorCode,
-            planType:_self.planType,
+            enrollmentPlanId: this.enrollmentPlanId,
+            year: this.year,
+            planNumber: this.planNumber,
+            universityId: this.universityId,
+            provinceId: this.provinceId,
+            discipline: this.discipline,
+            tuition: this.tuition,
+            majorName: this.majorName,
+            majorCode: this.majorCode,
+            planType: this.planType,
             option:"update"
         },
-        success: function (ret) {
-            _self.afterUpdate();
-        }
+        success: $.proxy(function (ret) {
+            var count = this.updateObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.updateObservers[i](this);
+            }
+
+        },this)
     });
 }
 
 
-enrollmentPlan.prototype.afterUpdate = function () {
-    
+enrollmentPlan.prototype.addUpdateObserver = function (observer) {
+    this.updateObservers.push(observer);
 }
 
 enrollmentPlan.prototype.delete = function () {
-    var _self = this;
     $.ajax({
         url: "/enrollmentPlanService",
         data: {
             enrollmentPlanId: _self.enrollmentPlanId,
             option:"delete"
         },
-        success: function (ret) {
-            _self.afterDelete();
-        }
+        success: $.proxy(function (ret) {
+            var count = this.deleteObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.deleteObservers[i](this);
+            }
+        },this)
     });
 }
 
-enrollmentPlan.prototype.afterDelete = function () {
-    
+enrollmentPlan.prototype.addDeleteObserver = function (observer) {
+    this.deleteObservers.push(observer);
 }
 
 function enrollmentPlans() {
@@ -142,22 +157,23 @@ function enrollmentPlans() {
         pageIndex: 1,
         pageSize:50
     };
+    this.loadObservers = [];
 }
 
 $.extend(enrollmentPlans.prototype,kf.util.entitiesPage.prototype);
 
 enrollmentPlans.prototype.load = function () {
-    var _self = this;
     return $.ajax({
         url: "/enrollmentPlanService",
         data: {
-            universityId: _self.filter.universityId,
-            year: _self.filter.year,
-            pageIndex: _self.filter.pageIndex,
-            pageSize: _self.filter.pageSize,
+            universityId: this.filter.universityId,
+            year: this.filter.year,
+            pageIndex: this.filter.pageIndex,
+            pageSize: this.filter.pageSize,
             option: "getlist"
         },
-        success: function (ret) {
+        success: $.proxy(function (ret) {
+            var _self = this;
             _self.clear();
             $.each(ret, function (i, item) {
                 var _enrollmentPlan = new enrollmentPlan();
@@ -171,14 +187,18 @@ enrollmentPlans.prototype.load = function () {
                 _enrollmentPlan.majorName = item.MajorName;
                 _self.add(_enrollmentPlan.enrollmentPlanId,_enrollmentPlan);
             });
-            _self.afterLoad();
-        }
+           
+            var count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this.values);
+            }
+        },this)
     });
 }
 
 
-enrollmentPlans.prototype.afterLoad = function () {
-  
+enrollmentPlans.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }
 
 enrollmentPlans.prototype.getPlanNumber = function (year,provinceId) {

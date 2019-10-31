@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <link type="text/css" rel="stylesheet" href="http://i.gtimg.cn/vipstyle/frozenui/2.0.0/css/frozen.css" />
+    <script src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+    <script src="/Scripts/Framework/util.js"></script>
+    <script src="/Scripts/Framework/user.js"></script>
+    <style>
+        .textbox {
+            width:100%;
+        }
+        .middleFontSize {
+            font-size:18px;
+        }
+    </style>
+</head>
+<body>
+    <header class="ui-header ui-header-positive">
+        <h1>公告：请联系我们的客服QQ:798046819,购买账号登陆使用。</h1>
+        <button class="ui-btn" id="btnShowLoginDialog">登陆</button>
+    </header>
+    <section class="ui-container">
+        <div class="ui-panel-center">
+            <h2>我们主要提供如下服务</h2>
+            <div>
+                <ul class="ui-list">
+                    <li class="ui-border-b middleFontSize">（一）中国大陆内大学信息查询</li>
+                    <li class="ui-border-b middleFontSize">（二）大学开设的专业，包括专业名称，专业编号，专业开设的课程</li>
+                    <li class="ui-border-b middleFontSize">（三）大学奖学金情况（不包含国家政府单位的奖学金设置（这个根据国家政策都有详细的规定），仅包含学校私人设立的奖学金）</li>
+                    <li class="ui-border-b middleFontSize">（四）高校招聘信息</li>
+                    <li class="ui-border-b middleFontSize">（五）高校所在省市的房地产市场，租赁市场情况</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <div class="ui-dialog" id="loginDialog">
+        <div class="ui-dialog-cnt">
+            <div class="ui-dialog-hd">
+                <h1>用户登录</h1>
+            </div>
+            <div class="ui-dialog-bd">
+                <input type="text" id="loginName" class="textbox" placeholder="用户名" />
+                <input type="password" id="pwd" class="textbox" placeholder="密码" />
+            </div>
+            <div class="ui-dialog-ft">
+                <button id="btnLogin">登陆</button>
+                <button id="btnCancel">取消</button>
+            </div>
+        </div> 
+    </div>
+
+    <script>
+        var _user;
+        $(document).ready(function () {
+            initUser();
+            $("#btnShowLoginDialog").click(function () {
+                $("#loginDialog").addClass("show");
+            });
+
+            $("#btnCancel").click(function () {
+                $("#loginDialog").removeClass("show");
+            });
+
+            $("#btnLogin").click(function () {
+                _user.loginName = $("#loginName").val();
+                _user.pwd = $("#pwd").val();
+                if (!_user.validate()) return;
+                _user.login();
+            });
+        });
+
+        function initUser() {
+            _user = new user();
+            _user.addLoadObserver(function () {
+                window.location.href = "/home/university/list.html";
+            });
+        }
+    </script>
+</body>
+</html>

@@ -17,65 +17,62 @@ function pageInit() {
     initEnrollmentPlans();
     initProvinces();
     initMajors();
-    $.when(_enrollmentPlans.load(), _provinces.load(), _majors.load()).then(function () {
-        var fragment = document.createDocumentFragment();
-        $.each(_enrollmentPlans.values, function (i, value) {
-            value.provinceName = _provinces.item(value.provinceId).provinceName;
+    initSearchBox();
+    $.when(_provinces.load(), _majors.load()).then(function () {
+        _enrollmentPlans.load();
+    });
+}
 
-            var div_list_info = new kf.components.div_list_info();
-            fragment.appendChild(div_list_info.export());
+function initSearchBox() {
+    $("#searchBox").addClass("ui-panel").css("text-align","center");
 
-            var label_year = kf.base.labelUI({ text: "年份:" });
-            div_list_info.appendChild(label_year);
-
-            var year = kf.base.labelUI({ text: value.year });
-            div_list_info.appendChild(year);
-
-            var label_province = kf.base.labelUI({ text: "省份:" });
-            div_list_info.appendChild(label_province);
-
-            var province = kf.base.labelUI({ text: value.provinceName });
-            div_list_info.appendChild(province);
-
-            var label_major = kf.base.labelUI({ text: "专业:" });
-            div_list_info.appendChild(label_major);
-
-            var majorName = kf.base.labelUI({ text: value.majorName });
-            div_list_info.appendChild(majorName);
-
-            var label_planNumber = kf.base.labelUI({ text: "招生人数:" });
-            div_list_info.appendChild(label_planNumber);
-
-            var planNumber = kf.base.labelUI({ text: value.planNumber });
-            div_list_info.appendChild(planNumber);
-        });
-
-        document.getElementById("enrollmentPlans").innerHTML = "";
-        document.getElementById("enrollmentPlans").appendChild(fragment);
+    var year = (new Date()).getFullYear();
+    var label_preYear = kf.base.labelUI({
+        text: year - 1,
+        className:"ui-label"
+    });
+    document.getElementById("searchBox").appendChild(label_preYear);
+    var label_year = kf.base.labelUI({
+        text: year,
+        className: "ui-label current"
+    });
+    document.getElementById("searchBox").appendChild(label_year);
+    var label_nextYear = kf.base.labelUI({
+        text: year + 1,
+        className: "ui-label"
+    });
+    document.getElementById("searchBox").appendChild(label_nextYear);
+    $("#searchBox").on("click", "label", function () {
+        $(this).addClass("current").siblings().removeClass("current");
+        var year = $(this).text();
+        _enrollmentPlans.filter.year = year;
+        _enrollmentPlans.load();
     });
 }
 
 function initUniversity() {
     _university = new university();
     _university.universityId = getUniversityId();
-    _university.afterLoad = function () {
-        var header = document.getElementsByTagName("header")[0];
-        $(header).addClass("ui-header ui-header-positive");
+    _university.addLoadObserver(initPageHeaderUI);
+}
 
-        var i = new kf.components.icon_return();
-        header.appendChild(i);
-        var h1 = kf.base.h1UI({ text: this.universityName });
-        header.appendChild(h1);
+function initPageHeaderUI(value) {
+    var header = document.getElementsByTagName("header")[0];
+    $(header).addClass("ui-header ui-header-positive");
 
-        var btnRight = new kf.base.buttonUI({
-            className: "ui-btn",
-            text: "...",
-            click: function () {
-                window.location.href = "/home/province/city/university/enrollmentPlan/detail.html?universityId=" + getUniversityId();
-            }
-        });
-        header.appendChild(btnRight.export());
-    }
+    var i = new kf.components.icon_return();
+    header.appendChild(i);
+    var h1 = kf.base.h1UI({ text: value.universityName });
+    header.appendChild(h1);
+
+    var btnRight = new kf.base.buttonUI({
+        className: "ui-btn",
+        text: "...",
+        click: function () {
+            window.location.href = "/home/province/city/university/enrollmentPlan/detail.html?universityId=" + getUniversityId();
+        }
+    });
+    header.appendChild(btnRight.export());
 }
 
 function initProvinces() {
@@ -91,6 +88,44 @@ function initEnrollmentPlans() {
     _enrollmentPlans = new enrollmentPlans();
     _enrollmentPlans.filter.universityId = getUniversityId();
     _enrollmentPlans.filter.year = (new Date()).getFullYear();
+    _enrollmentPlans.addLoadObserver(showEnrollmentPlansUI);
+}
+
+function showEnrollmentPlansUI(values) {
+    var fragment = document.createDocumentFragment();
+    $.each(values, function (i, value) {
+        value.provinceName = _provinces.item(value.provinceId).provinceName;
+
+        var div_list_info = new kf.components.div_list_info();
+        fragment.appendChild(div_list_info.export());
+
+        var label_year = kf.base.labelUI({ text: "年份:" });
+        div_list_info.appendChild(label_year);
+
+        var year = kf.base.labelUI({ text: value.year });
+        div_list_info.appendChild(year);
+
+        var label_province = kf.base.labelUI({ text: "|省份:" });
+        div_list_info.appendChild(label_province);
+
+        var province = kf.base.labelUI({ text: value.provinceName });
+        div_list_info.appendChild(province);
+
+        var label_major = kf.base.labelUI({ text: "|专业:" });
+        div_list_info.appendChild(label_major);
+
+        var majorName = kf.base.labelUI({ text: value.majorName });
+        div_list_info.appendChild(majorName);
+
+        var label_planNumber = kf.base.labelUI({ text: "|招生人数:" });
+        div_list_info.appendChild(label_planNumber);
+
+        var planNumber = kf.base.labelUI({ text: value.planNumber });
+        div_list_info.appendChild(planNumber);
+    });
+
+    document.getElementById("enrollmentPlans").innerHTML = "";
+    document.getElementById("enrollmentPlans").appendChild(fragment);
 }
 
 function getUniversityId() {

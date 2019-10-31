@@ -17,50 +17,56 @@ function pageInit() {
 function initUniversity() {
     _university = new university();
     _university.universityId = getUniversityId();
-    _university.afterLoad = function () {
-        var header = document.getElementsByTagName("header")[0];
-        $(header).addClass("ui-header ui-header-positive");
+    _university.addLoadObserver(initPageHeaderUI);
+}
 
-        var i = new kf.components.icon_return();
-        header.appendChild(i);
+function initPageHeaderUI(value) {
+    var header = document.getElementsByTagName("header")[0];
+    $(header).addClass("ui-header ui-header-positive");
 
-        var h1 = kf.base.h1UI({ text: this.universityName + " 奖学金" });
-        header.appendChild(h1);
+    var i = new kf.components.icon_return();
+    header.appendChild(i);
 
-        var btnRight = new kf.base.buttonUI({
-            className: "ui-btn",
-            text: "...",
-            click: function () {
-                window.location.href = "/home/province/city/university/scholarship/detail.html";
-            }
-        });
-        header.appendChild(btnRight.export());
-    }
+    var h1 = kf.base.h1UI({ text: value.universityName + " 奖学金" });
+    header.appendChild(h1);
+
+    var btnRight = new kf.base.buttonUI({
+        className: "ui-btn",
+        text: "...",
+        click: function () {
+            window.location.href = "/home/province/city/university/scholarship/detail.html?universityId=" + getUniversityId();
+        }
+    });
+    header.appendChild(btnRight.export());
 }
 
 function initScholarShips() {
     _scholarships = new scholarShips();
     _scholarships.filter.universityId = getUniversityId();
-    _scholarships.afterLoad = function () {
-        var fragment = document.createDocumentFragment();
-        var count = this.values.length;
-        for (var i = 0; i < count; i++) {
-            var div_list_info = new kf.components.div_list_info();
-            
-            var labelName = kf.base.labelUI({ text: this.values["scholarshipName"] });
-            div_list_info.appendChild(labelName);
+    _scholarships.addLoadObserver(showScholarShipListUI);
+}
 
-            var div_operation = kf.base.divUI();
+function showScholarShipListUI(values) {
+    var fragment = document.createDocumentFragment();
+    $.each(values, function (i, item) {
+        var div_list_info = new kf.components.div_list_info();
 
-            var a_Detail = kf.base.aUI({
-                className: "ui-label-s",
-                text: "详情",
-                href: "/home/province/city/university/scholarship/detail.html?scholarShipId=" + value.scholarShipId
-            })
-            fragment.appendChild(div_list_info.export());
-        }
-        document.getElementById("scholarships").appendChild(fragment);
-    }
+        var labelName = kf.base.labelUI({ text: item["scholarShipName"] });
+        div_list_info.appendChild(labelName);
+
+        var div_operation = kf.base.divUI();
+        div_list_info.appendChild(div_operation);
+
+        var a_Detail = kf.base.aUI({
+            className: "ui-label-s",
+            text: "详情",
+            href: "/home/province/city/university/scholarship/detail.html?scholarShipId=" + item.scholarShipId
+        });
+        div_operation.appendChild(a_Detail);
+
+        fragment.appendChild(div_list_info.export());
+    });
+    document.getElementById("scholarships").appendChild(fragment);
 }
 
 function getUniversityId() {

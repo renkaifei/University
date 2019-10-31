@@ -9,6 +9,11 @@ function scholarShip() {
     this.startYear = "";
     this.endYear = "";
     this.universityId = 0;
+
+    this.loadObservers = [];
+    this.createObservers = [];
+    this.updateObservers = [];
+    this.deleteObservers = [];
 }
 
 scholarShip.prototype.validate = function () {
@@ -20,28 +25,31 @@ scholarShip.prototype.validate = function () {
 }
 
 scholarShip.prototype.load = function () {
-    var _self = this;
     $.ajax({
         url: "/scholarShipService",
         data: {
-            scholarShipId: _self.scholarShipId,
+            scholarShipId: this.scholarShipId,
             option: "getone"
         },
-        success: function (ret) {
-            _self.scholarShipId = ret.ScholarShipId,
-            _self.scholarShipName = ret.ScholarShipName,
-            _self.scholarShipAbstract = $.decodeUTF8(ret.ScholarShipAbstract);
-            _self.scholarShipTotal = ret.ScholarShipTotal;
-            _self.universityId = ret.UniversityId;
-            _self.startYear = ret.StartYear;
-            _self.endYear = ret.EndYear;
-            _self.afterLoad();
-        }
+        success: $.proxy(function (ret) {
+            this.scholarShipId = ret.ScholarShipId,
+            this.scholarShipName = ret.ScholarShipName,
+            this.scholarShipAbstract = $.decodeUTF8(ret.ScholarShipAbstract);
+            this.scholarShipTotal = ret.ScholarShipTotal;
+            this.universityId = ret.UniversityId;
+            this.startYear = ret.StartYear;
+            this.endYear = ret.EndYear;
+            
+            var count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this);
+            }
+        },this)
     });
 }
 
-scholarShip.prototype.afterLoad = function () {
-    
+scholarShip.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }
 
 scholarShip.prototype.isNew = function () {
@@ -49,103 +57,119 @@ scholarShip.prototype.isNew = function () {
 }
 
 scholarShip.prototype.add = function () {
-    var _self = this;
-    var scholarShipAbstract = $.strToUTF8(_self.scholarShipAbstract).join(",");
+    var scholarShipAbstract = $.strToUTF8(this.scholarShipAbstract).join(",");
     $.ajax({
         url: "/scholarShipService",
         data: {
-            scholarShipName: _self.scholarShipName,
+            scholarShipName: this.scholarShipName,
             scholarShipAbstract: scholarShipAbstract,
-            scholarShipTotal: _self.scholarShipTotal,
-            startYear: _self.startYear,
-            endYear:_self.endYear,
-            universityId: _self.universityId,
+            scholarShipTotal: this.scholarShipTotal,
+            startYear: this.startYear,
+            endYear: this.endYear,
+            universityId: this.universityId,
             option:"add"
         },
-        success: function (ret) {
-            _self.scholarShipId = ret.ScholarShipId;
-            _self.afterAdd();
-        }
+        success: $.proxy(function (ret) {
+            this.scholarShipId = ret.ScholarShipId;
+            
+            var count = this.createObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.createObservers[i](this);
+            }
+
+        },this)
     })
 }
 
-scholarShip.prototype.afterAdd = function () {
-    
+scholarShip.prototype.addCreateObserver = function (observer) {
+    this.createObservers.push(this);
 }
 
 scholarShip.prototype.update = function () {
-    var _self = this;
-    var scholarShipAbstract = $.strToUTF8(_self.scholarShipAbstract).join(",");
+    var scholarShipAbstract = $.strToUTF8(this.scholarShipAbstract).join(",");
     $.ajax({
         url: "/scholarShipService",
         data: {
-            scholarShipId: _self.scholarShipId,
-            scholarShipName: _self.scholarShipName,
+            scholarShipId: this.scholarShipId,
+            scholarShipName: this.scholarShipName,
             scholarShipAbstract: scholarShipAbstract,
-            scholarShipTotal: _self.scholarShipTotal,
-            startYear: _self.startYear,
-            endYear:_self.endYear,
-            universityId: _self.universityId,
+            scholarShipTotal: this.scholarShipTotal,
+            startYear: this.startYear,
+            endYear: this.endYear,
+            universityId: this.universityId,
             option:"update"
         },
-        success: function (ret) {
-            _self.afterUpdate();
-        }
+        success:$.proxy(function (ret) {
+            var count = this.updateObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.updateObservers[i](this);
+            }
+        },this)
     });
 }
 
-scholarShip.prototype.afterUpdate = function () {
-    
+scholarShip.prototype.addUpdateObserver = function (observer) {
+    this.updateObservers.push(observer);
 }
 
 scholarShip.prototype.delete = function () {
-    var _self = this;
     $.ajax({
         url: "/scholarShipService",
         data: {
-            scholarShipId: _self.scholarShipId,
+            scholarShipId: this.scholarShipId,
             option:"delete"
         },
-        success: function (ret) {
-            _self.afterDelete();
-        }
+        success:$.proxy(function (ret) {
+            var count = this.deleteObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.deleteObservers[i](this);
+            }
+        },this)
     })
 }
 
-scholarShip.prototype.afterDelete = function () { }
+scholarShip.prototype.addDeleteObserver = function (observer) {
+    this.deleteObservers.push(observer);
+}
 
 function scholarShips() {
     kf.util.entitiesPage.call(this);
+    this.loadObservers = [];
 }
 
 $.extend(scholarShips.prototype, kf.util.entitiesPage.prototype);
 
 scholarShips.prototype.load = function () {
-    var _self = this;
     $.ajax({
         url: "/scholarShipService",
         data: {
             option: "getlist",
-            universityId: _self.filter.universityId,
-            pageIndex: _self.filter.pageIndex,
-            pageSize:_self.filter.pageSize
+            universityId: this.filter.universityId,
+            pageIndex: this.filter.pageIndex,
+            pageSize: this.filter.pageSize
         },
-        success: function (ret) {
-            _self.clear();
-            $.each(ret, function (i, item) {
+        success: $.proxy(function (ret) {
+            this.clear();
+            
+            var count = ret.length;
+            for (var i = 0; i < count; i++) {
                 var _scholarship = new scholarShip();
-                _scholarship.scholarShipId = item.ScholarShipId;
-                _scholarship.scholarShipName = item.ScholarShipName;
-                _scholarship.scholarShipTotal = item.ScholarShipTotal;
-                _scholarship.startYear = item.StartYear;
-                _scholarship.endYear = item.EndYear;
-                _self.add(_scholarship.scholarShipId, _scholarship);
-            });
-            _self.afterLoad();
-        }
+                _scholarship.scholarShipId = ret[i].ScholarShipId;
+                _scholarship.scholarShipName = ret[i].ScholarShipName;
+                _scholarship.scholarShipTotal = ret[i].ScholarShipTotal;
+                _scholarship.startYear = ret[i].StartYear;
+                _scholarship.endYear = ret[i].EndYear;
+                this.add(_scholarship.scholarShipId, _scholarship);
+            }
+            
+            count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this.values);
+            }
+        },this)
     });
 }
 
-scholarShips.prototype.afterLoad = function () {
-    
+scholarShips.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }

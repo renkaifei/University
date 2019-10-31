@@ -55,16 +55,18 @@ function initPageFooter() {
 function initUniversity() {
     _university = new university();
     _university.universityId = getUniversityId();
-    _university.afterLoad = function () {
-        var header = document.getElementsByTagName("header")[0];
-        $(header).addClass("ui-header ui-header-positive");
+    _university.addLoadObserver(initPageHeaderUI);
+}
 
-        var i = new kf.components.icon_return();
-        header.appendChild(i);
+function initPageHeaderUI(value) {
+    var header = document.getElementsByTagName("header")[0];
+    $(header).addClass("ui-header ui-header-positive");
 
-        var h1 = kf.base.h1UI({ text: this.universityName + " 招生计划" });
-        header.appendChild(h1);
-    }
+    var i = new kf.components.icon_return();
+    header.appendChild(i);
+
+    var h1 = kf.base.h1UI({ text: value.universityName + " 招生计划" });
+    header.appendChild(h1);
 }
 
 function initMajors() {
@@ -81,53 +83,49 @@ function initEnrollmentPlan(){
     _enrollmentPlan.enrollmentPlanId = getEnrollmentPlanId();
     _enrollmentPlan.universityId = getUniversityId();
     if(_enrollmentPlan.isNew()){
-        _enrollmentPlan.afterAdd = function () {
-            history.back();
-        }
+        _enrollmentPlan.addCreateObserver($.goback);
     }else{
-        _enrollmentPlan.afterLoad = function(){
-            showEnrollmentPlanUI();
-        }
+        _enrollmentPlan.addLoadObserver(showEnrollmentPlanUI);
         _enrollmentPlan.afterUpdate = function(){
             history.back();
         }
     }
 }
 
-function showEnrollmentPlanUI() {
+function showEnrollmentPlanUI(value) {
     var fragment = document.createDocumentFragment();
     var formItem_year = new kf.components.formItem_text({
         label: "年份:",
-        value: _enrollmentPlan.year,
-        change: function (value) {
-            _enrollmentPlan.year = value;
+        value: value.year,
+        change: function (year) {
+            value.year = year;
         },
         clear: function () {
-            _enrollmentPlan.year = 0;
+            value.year = 0;
         }
     });
     fragment.appendChild(formItem_year.export());
 
     var formItem_planNumber = new kf.components.formItem_text({
         label: "计划人数:",
-        value: _enrollmentPlan.planNumber,
-        change: function (value) {
-            _enrollmentPlan.planNumber = value;
+        value: value.planNumber,
+        change: function (planNumber) {
+            value.planNumber = planNumber;
         },
         clear: function () {
-            _enrollmentPlan.planNumber = 0;
+            value.planNumber = 0;
         }
     });
     fragment.appendChild(formItem_planNumber.export());
 
     var formItem_tuition = new kf.components.formItem_text({
         label: "学费:",
-        value: _enrollmentPlan.tuition,
-        change: function (value) {
-            _enrollmentPlan.tuition = value;
+        value: value.tuition,
+        change: function (tuition) {
+            value.tuition = tuition;
         },
         clear: function () {
-            _enrollmentPlan.tuition = 0;
+            value.tuition = 0;
         }
     });
 
@@ -135,7 +133,7 @@ function showEnrollmentPlanUI() {
 
     formItem_majorName = new kf.components.formItem_text_select({
         label: "专业名称",
-        value: _enrollmentPlan.majorName,
+        value: value.majorName,
         textField:"majorName",
         initHeader:[
             { headerName: "专业名称", name: "majorName" }
@@ -144,31 +142,30 @@ function showEnrollmentPlanUI() {
             _majors.filter.majorName = "";
             _majors.load();
         },
-        searchHandler: function (value) {
-            _majors.filter.majorName = value;
+        searchHandler: function (majorName) {
+            _majors.filter.majorName = majorName;
             _majors.load();
         },
-        okHandler: function (value) {
-            _enrollmentPlan.majorName = value["majorName"];
+        okHandler: function (ret) {
+            value.majorName = ret["majorName"];
         }
     });
     formItem_majorName.setDialogTitle("专业选择");
     formItem_majorName.addClearObserver(function () {
-        _enrollmentPlan.majorName = "";
-    })
+        value.majorName = "";
+    });
 
     fragment.appendChild(formItem_majorName.export());
 
     var formItem_majorCode = new kf.components.formItem_text({
         label: "专业编码",
-        value: _enrollmentPlan.majorCode,
-        change: function (value) {
-            _enrollmentPlan.majorCode = value;
+        value: value.majorCode,
+        change: function (majorCode) {
+            value.majorCode = majorCode;
         },
         clear: function () {
-            _enrollmentPlan.majorCode = "";
-        },
-        
+            value.majorCode = "";
+        }
     });
     fragment.appendChild(formItem_majorCode.export());
 
@@ -182,9 +179,9 @@ function showEnrollmentPlanUI() {
             { value: 5, text: "理工" },
             { value: 6, text: "文史" }
         ],
-        value: _enrollmentPlan.discipline,
-        selectIndexChanged: function (value) {
-            _enrollmentPlan.discipline = value;
+        value: value.discipline,
+        selectIndexChanged: function (discipline) {
+            value.discipline = discipline;
         }
     });
     fragment.appendChild(formItem_discipline.export());
@@ -201,9 +198,9 @@ function showEnrollmentPlanUI() {
             { value: 6, text: "特殊类型批-自主招生计划" },
             { value: 7, text: "地方专项计划" }
         ],
-        value: _enrollmentPlan.planType,
-        selectIndexChanged: function (value) {
-            _enrollmentPlan.planType = value;
+        value: value.planType,
+        selectIndexChanged: function (planType) {
+            value.planType = planType;
         }
     });
 
@@ -211,7 +208,7 @@ function showEnrollmentPlanUI() {
 
     formItem_province = new kf.components.formItem_text_select({
         label: "所在省份:",
-        value: _enrollmentPlan.provinceName,
+        value: value.provinceName,
         textField:"provinceName",
         initHeader: [
             { headerName: "省份", name: "provinceName" }
@@ -226,11 +223,10 @@ function showEnrollmentPlanUI() {
         searchHandler: function (value) {
             _provinces.filter.provinceName = value;
             _provinces.load();
-           
         },
         okHandler: function (value) {
-            _enrollmentPlan.provinceName = value["provinceName"];
-            _enrollmentPlan.provinceId = value["provinceId"]
+            value.provinceName = value["provinceName"];
+            value.provinceId = value["provinceId"]
         }
     });
     fragment.appendChild(formItem_province.export());
@@ -275,7 +271,9 @@ function initmajorDialog() {
 
 function initProvinces() {
     _provinces = new provinces();
+    _provinces.addLoadObserver();
 }
+
 
 
 

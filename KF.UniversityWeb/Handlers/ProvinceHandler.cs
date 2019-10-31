@@ -2,64 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using KF.Web.Common;
-using KF.Repo;
-using KF.Repo.Entities;
-using System.Web.SessionState;
+using KF.Domain.Model;
+using KF.Domain.Interface;
+using KF.Repository;
 
 namespace KF.UniversityWeb.Handlers
 {
-    public class ProvinceHandler : IHttpHandler
+    public class ProvinceHandler:BaseHandler 
     {
-        private ContextHelper Helper { get; set; }
-
-        public void ProcessRequest(HttpContext context)
+        protected override void CustomProcessRequest()
         {
-            Helper = new ContextHelper(context);
             string option = Helper.GetParameterFromRequest("option").ToLower();
             if (option == "getlist")
             {
                 GetList();
             }
-            else if (option == "getone")
-            {
-                GetOne();
-            }
         }
 
         private void GetList()
         {
-            Provinces provinces = new Provinces();
-            ProvincesRepo Repo = new ProvincesRepo(provinces);
-            if (Repo.Query())
+            IProvinceRepository Repo = new ProvinceRepository();
+            Entities entites = Repo.GetList();
+            IError error = Repo as IError;
+            if (string.IsNullOrEmpty(error.ErrorMessage))
             {
-                Helper.Response(provinces.Serialize());
+                Helper.Response(entites.Serialize());
             }
             else
             {
-                Helper.ResponseError(Repo.ErrorMessage);
+                Helper.ResponseError(error.ErrorMessage);
             }
         }
-
-        private void GetOne()
-        {
-            int provinceId = int.Parse(Helper.GetParameterFromRequest("provinceId"));
-            Province province = new Province() { ProvinceId = provinceId };
-            ProvinceRepo Repo = new ProvinceRepo(province);
-            if (Repo.Query())
-            {
-                Helper.Response(province.Serialize());
-            }
-            else
-            {
-                Helper.ResponseError(Repo.ErrorMessage);
-            }
-        }
-
-        public bool IsReusable
-        {
-            get { return false; }
-        }
-
     }
 }

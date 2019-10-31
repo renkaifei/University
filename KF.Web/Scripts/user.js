@@ -7,6 +7,12 @@ function user() {
     this.userName = "";
     this.loginName = "";
     this.pwd = "";
+
+    this.loadObservers = [];
+    this.createObservers = [];
+    this.updateObservers = [];
+    this.deleteObservers = [];
+    this.loginObservers = [];
 };
 
 user.prototype.isNew = function () {
@@ -26,49 +32,53 @@ user.prototype.validate = function () {
 }
 
 user.prototype.load = function () {
-    var _self = this;
     $.ajax({
         url: "/userService",
         data: {
-            userId:_self.userId,
+            userId:this.userId,
             option:"getone"
         },
-        success: function (ret) {
-            _self.userId = ret.UserId;
-            _self.userName = ret.UserName;
-            _self.loginName = ret.LoginName;
-            _self.afterLoad();
-        }
+        success:$.proxy(function (ret) {
+            this.userId = ret.UserId;
+            this.userName = ret.UserName;
+            this.loginName = ret.LoginName;
+           
+            var count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this);
+            }
+        },this)
     });
 }
 
-user.prototype.afterLoad = function () {
-
+user.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }
 
 user.prototype.add = function () {
-    var _self = this;
     $.ajax({
         url: "/userService",
         data:{
-            userName: _self.userName,
-            loginName: _self.loginName,
-            pwd: _self.pwd,
+            userName: this.userName,
+            loginName: this.loginName,
+            pwd: this.pwd,
             option:"add"
         },
-        success: function (ret) {
-            _self.userId = ret.UserId;
-            _self.afterAdd();
-        }
+        success: $.proxy(function (ret) {
+            this.userId = ret.UserId;
+            var count = this.createObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.createObservers[i](this);
+            }
+        },this)
     });
 }
 
-user.prototype.afterAdd = function () {
-    
+user.prototype.addCreateObserver = function (observer) {
+    this.createObservers.push(observer);
 }
 
 user.prototype.update = function () {
-    var _self = this;
     $.ajax({
         url: "/userService",
         data: {
@@ -78,137 +88,96 @@ user.prototype.update = function () {
             pwd: _self.pwd,
             option:"update"
         },
-        success: function (ret) {
-            _self.afterUpdate();
-        }
+        success: $.proxy(function (ret) {
+            this.userId = ret.UserId;
+            var count = this.updateObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.updateObservers[i](this);
+            }
+        },this)
     });
 }
 
-user.prototype.afterUpdate = function () {
-
+user.prototype.addUpdateObserver = function (observer) {
+    this.updateObservers.push(observer);
 }
 
 user.prototype.delete = function () {
-    var _self = this;
     $.ajax({
         url: "/userService",
         data: {
-            userId: _self.userId,
+            userId: this.userId,
             option: "delete"
         },
-        success: function (ret) {
-            _self.afterDelete();
-        }
+        success:$.proxy(function (ret) {
+            var count = this.deleteObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.deleteObservers[i](this);
+            }
+        },this)
     });
 }
 
-user.prototype.afterDelete = function () {
+user.prototype.addDeleteObserver = function (observer) {
+    this.deleteObservers.push(observer);
 }
 
 user.prototype.login = function () {
-    var _self = this;
     $.ajax({
         url: "/loginService",
         data: {
-            loginName: _self.loginName,
-            pwd: _self.pwd,
+            loginName: this.loginName,
+            pwd: this.pwd,
             option:"login"
         },
-        success: function () {
-            _self.afterLogin();
-        }
+        success:$.proxy(function () {
+            var count = this.loginObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loginObservers[i](this);
+            }
+        },this)
     });
 }
 
-user.prototype.afterLogin = function () { }
-
-user.prototype.listItemUI = function () {
-    var _self = this;
-
-    var li = liUI();
-
-    var div_list_info = list_infoUI();
-    li.appendChild(div_list_info);
-
-    var p_loginName = pUI({ text:_self.loginName });
-    div_list_info.appendChild(p_loginName);
-
-    var div_operation = operationUI({
-        detail: {
-            text: "详细",
-            click: function () {
-                window.location.href = "/home/user/detail.html?userId=" + _self.userId;
-            }
-        },
-        del: {
-            text: "删除",
-            click: function () {
-                _self.delete();
-            }
-        },
-        assignRole: {
-            text: "设置角色",
-            click: function () {
-                window.location.href = "/home/user/assignRoles.html?userId=" + _self.userId;
-            }
-        }
-    });
-    div_list_info.appendChild(div_operation);
-
-    return li;
-}
-
-user.prototype.detailUI = function () {
-    var _self = this;
-    var fragment = document.createDocumentFragment();
-
-    fragment.appendChild(formItem_text({ label: "用户名", value: _self, fieldName: "userName" }));
-    fragment.appendChild(formItem_text({ label: "登陆名", value: _self, fieldName: "loginName" }));
-    fragment.appendChild(formItem_text({ label: "密码", value: _self, fieldName: "pwd" }));
-    return fragment;
+user.prototype.addLoginObserver = function (observer) {
+    this.loginObservers.push(observer);
 }
 
 function users() {
-    entitiesPage.call(this);
+    kf.util.entitiesPage.call(this);
+    this.loadObservers = [];
 }
 
-$.extend(users.prototype, entitiesPage.prototype);
+$.extend(users.prototype, kf.util.entitiesPage.prototype);
 
 
 users.prototype.load = function () {
-    var _self = this;
     $.ajax({
         url: "/userService",
         data: {
-            pageIndex: _self.filter.pageIndex,
-            pageSize: _self.filter.pageSize,
+            pageIndex: this.filter.pageIndex,
+            pageSize: this.filter.pageSize,
             option: "getlist"
         },
-        success: function (ret) {
-            _self.clear();
-            _self.totalCount = ret.TotalCount;
-            $.each(ret.Values, function (i, item) {
+        success: $.proxy(function (ret) {
+            var _self = this;
+            $.each(ret, function (i, item) {
                 var _user = new user();
                 _user.userId = item.UserId;
                 _user.userName = item.UserName;
                 _user.loginName = item.LoginName;
-                _self.add(_user.userId,_user);
+                _self.add(_user.userId, _user);
             });
-            _self.afterLoad();
-        }
+           
+            var count = this.loadObservers.length;
+            for (var i = 0; i < count; i++) {
+                this.loadObservers[i](this);
+            }
+        },this)
     });
 };
 
-users.prototype.afterLoad = function () {
-
-};
-
-users.prototype.listUI = function () {
-    var _self = this;
-    var fragment = document.createDocumentFragment();
-    $.each(_self.values, function (i,item) {
-        fragment.appendChild(item.listItemUI());
-    });
-    return fragment;
+users.prototype.addLoadObserver = function (observer) {
+    this.loadObservers.push(observer);
 }
 

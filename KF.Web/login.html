@@ -12,9 +12,8 @@
     <link href="/Content/frozenui.css" rel="stylesheet" />
     <link href="/Content/common.css" rel="stylesheet" />
 
-
-    <script src="/Scripts/jquery-1.12.4.js"></script>
-    <script src="/Scripts/common.js"></script>
+    <script src="/Scripts/Libraries/jquery-1.12.4.min.js"></script>
+    <script src="/Scripts/Framework/util.js"></script>
     <script src="/Scripts/user.js"></script>
 </head>
 <body>
@@ -43,11 +42,11 @@
     <script>
 
         $(document).ready(function () {
-            $("#btnClearLoginName").click(function(){
+            $("#btnClearLoginName").click(function () {
                 $("#loginName").val("");
             });
 
-            $("#btnClearPwd").click(function(){
+            $("#btnClearPwd").click(function () {
                 $("#pwd").val("");
             });
 
@@ -55,12 +54,12 @@
                 var _user = new user();
                 _user.loginName = $("#loginName").val();
                 _user.pwd = $("#pwd").val();
-                _user.afterLogin = function () {
+                _user.addLoginObserver(function () {
                     window.location.href = "/home/index.html";
-                }
+                });
                 _user.login();
-            })
-        })
+            });
+        });
     </script>
 </body>
 </html>

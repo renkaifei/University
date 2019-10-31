@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+
+    <link type="text/css" rel="stylesheet" href="http://i.gtimg.cn/vipstyle/frozenui/2.0.0/css/frozen.css" />
+    <link href="/Content/common.css" rel="stylesheet" />
+    <script src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+    <script src="/Scripts/Framework/Module/universityDetail.js"></script>
+    <script src="/Scripts/Framework/Components/base.js"></script>
+    <script src="/Scripts/Framework/util.js"></script>
+    <script src="/Scripts/Framework/Components/div_list_info.js"></script>
+    <script src="/Scripts/Framework/university.js"></script>
+    <script src="/Scripts/Framework/major.js"></script>
+    <script src="/Scripts/Framework/scholarShip.js"></script>
+</head>
+<body>
+    <header></header>
+    <section class="ui-container">
+        <div class="ui-tab">
+            <ul id="tab" class="ui-tab-nav ui-border-b">
+                <li index="0" class="current"><span>简介</span></li>
+                <li index="1"><span>专业</span></li>
+                <li index="2"><span>奖学金</span></li>
+            </ul>
+        </div>
+        <div class="ui-panel" id="container">
+
+        </div>
+    </section>
+
+    <script>
+        $(document).ready(function () {
+            pageInit();
+        });
+    </script>
+</body>
+</html>

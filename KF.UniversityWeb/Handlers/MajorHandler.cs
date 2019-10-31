@@ -1,64 +1,39 @@
-﻿using KF.Repo;
-using KF.Repo.Entities;
-using KF.Web.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using KF.Domain.Interface;
+using KF.Domain.Model;
+using KF.Repository;
 
 namespace KF.UniversityWeb.Handlers
 {
-    public class MajorHandler:IHttpHandler
+    public class MajorHandler:BaseHandler 
     {
-        private ContextHelper Helper { get; set; }
-        public void ProcessRequest(HttpContext context)
+        protected override void CustomProcessRequest()
         {
-            Helper = new ContextHelper(context);
-
             string option = Helper.GetParameterFromRequest("option").ToLower();
-            if (option == "getlist")
+            if (option.Equals("getlist"))
             {
                 GetList();
-            }
-            else if (option == "getone")
-            {
-                GetOne();
             }
         }
 
         private void GetList()
         {
+            IMajorRepository Repo = new MajorRepository();
+            string majorName = Helper.GetParameterFromRequest("majorName");
             int universityId = int.Parse(Helper.GetParameterFromRequest("universityId"));
-            Majors majors = new Majors();
-            MajorsRepo Repo = new MajorsRepo(majors);
-            if (Repo.Query(universityId))
+            Entities entities = Repo.GetList(majorName, universityId);
+            IError error = Repo as IError;
+            if (string.IsNullOrEmpty(error.ErrorMessage))
             {
-                Helper.Response(majors.Serialize());
+                Helper.Response(entities.Serialize());
             }
             else
             {
-                Helper.ResponseError(Repo.ErrorMessage);
+                Helper.ResponseError(error.ErrorMessage);
             }
-        }
-
-        private void GetOne()
-        {
-            Major major = new Major();
-            major.MajorId = int.Parse(Helper.GetParameterFromRequest("majorId"));
-            MajorRepo Repo = new MajorRepo(major);
-            if (Repo.Query())
-            {
-                Helper.Response(major.Serialize());
-            }
-            else
-            {
-                Helper.ResponseError(Repo.ErrorMessage);
-            }
-        }
-
-        public bool IsReusable
-        {
-            get { return false; }
         }
     }
 }

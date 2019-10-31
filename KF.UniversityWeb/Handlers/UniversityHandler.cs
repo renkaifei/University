@@ -2,61 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using KF.Web.Common;
-using KF.Repo;
-using KF.Repo.Entities;
+using KF.Domain.Interface;
+using KF.Domain.Model;
+using KF.Repository;
 
 namespace KF.UniversityWeb.Handlers
 {
-    public class UniversityHandler:IHttpHandler
+    public class UniversityHandler:BaseHandler 
     {
-        private ContextHelper Helper {get;set;}
-
-        public bool IsReusable
+        protected override void CustomProcessRequest()
         {
-            get { return false; }
-        }
-
-        public void ProcessRequest(HttpContext context)
-        {
-            Helper = new ContextHelper(context);
-
             string option = Helper.GetParameterFromRequest("option").ToLower();
             if (option == "getlist")
             {
                 GetList();
             }
-            else if (option == "getone")
+            else if(option == "getone")
             {
                 GetOne();
             }
         }
 
         private void GetList()
-        {
+        { 
             int provinceId = int.Parse(Helper.GetParameterFromRequest("provinceId"));
             int cityId = int.Parse(Helper.GetParameterFromRequest("cityId"));
             int pageIndex = int.Parse(Helper.GetParameterFromRequest("pageIndex"));
             int pageSize = int.Parse(Helper.GetParameterFromRequest("pageSize"));
-
-            Universitys universitys = new Universitys();
-            UniversitysRepo Repo = new UniversitysRepo(universitys);
-            if (Repo.Query(provinceId, cityId, pageIndex, pageSize))
+            IUniversityRepository Repo = new UniversityRepository();
+            Entities entities = Repo.GetList(provinceId, cityId, pageIndex, pageSize);
+            IError error = Repo as IError;
+            if (string.IsNullOrEmpty(error.ErrorMessage))
             {
-                Helper.Response(universitys.Serialize());
+                Helper.Response(entities.PageSerialize());
             }
             else
             {
-                Helper.ResponseError(Repo.ErrorMessage);
+                Helper.ResponseError(error.ErrorMessage);
             }
         }
 
         private void GetOne()
         {
-            University university = new University();
-            university.UniversityId = int.Parse(Helper.GetParameterFromRequest("universityId"));
-            UniversityRepo Repo = new UniversityRepo(university);
-            if (Repo.Query())
+            int universityId = int.Parse(Helper.GetParameterFromRequest("universityId"));
+            IEntityRepository Repo = new UniversityRepository();
+            Entity university = Repo.GetOne(universityId);
+            if (string.IsNullOrEmpty(Repo.ErrorMessage))
             {
                 Helper.Response(university.Serialize());
             }

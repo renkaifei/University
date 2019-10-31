@@ -1,5 +1,6 @@
 ﻿/// <reference path="../../Libraries/jquery-1.12.4.min.js" />
 /// <reference path="../Components/base.js" />
+/// <reference path="../util.js" />
 /// <reference path="../Components/icon_return.js" />
 /// <reference path="../Components/div_list_info.js" />
 /// <reference path="../Components/formItem_text.js" />
@@ -31,22 +32,15 @@ function initPageHeader() {
 function initUniversity(){
     _university = new university();
     _university.universityId = getUniversityId();
-    if(_university.isNew()){
-        _university.afterAdd = function(){
-            history.back();
-        }
-        initUniversityUI();
+    if (_university.isNew()) {
+        _university.addCreateObserver($.goback);
     }else{
-        _university.afterLoad = function(){
-            initUniversityUI()
-        }
-        _university.afterUpdate = function(){
-            history.back();
-        }
+        _university.addLoadObserver(initUniversityUI);
+        _university.addUpdateObserver($.goback);
     }
 }
 
-function initUniversityUI() {
+function initUniversityUI(value) {
     var fragment = document.createDocumentFragment();
 
     var div_form_item_Icon = kf.base.divUI({ className:"ui-border-b" });
@@ -66,7 +60,7 @@ function initUniversityUI() {
     $(img).css({ height: "70px", width: "70px" }).click(function () {
         $(input_file).click()
     });
-    if (_university.universityIcon != "") $(img).prop("src", "data:image/jpeg;base64," + _university.universityIcon);
+    if (value.universityIcon != "") $(img).prop("src", "data:image/jpeg;base64," + value.universityIcon);
 
     $(input_file).css({ "position": "absolute", left: "-100px", top: "-100px" }).change(function () {
         if (input_file.files.length == 0) return;
@@ -83,20 +77,20 @@ function initUniversityUI() {
             cache: false,
             processData: false,
             success: function (ret) {
-                _university.universityIcon = ret;
-                img.src = "data:image/jpeg;base64," + _university.universityIcon;
+                value.universityIcon = ret;
+                img.src = "data:image/jpeg;base64," + value.universityIcon;
             }
         });
     });
 
     var formItem_universityName = new kf.components.formItem_text({
         label: "高校名称",
-        value: _university.universityName,
+        value: value.universityName,
         change: function (value) {
-            _university.universityName = value;
+            value.universityName = value;
         },
         clear: function () {
-            _university.setUniversityName("");
+            value.setUniversityName("");
         }
     });
 
@@ -104,48 +98,48 @@ function initUniversityUI() {
 
     var formItem_universityAddress = new kf.components.formItem_text({
         label: "高校地址",
-        value: _university.universityAddress,
-        change: function (value) {
-            _university.universityAddress = value;
+        value: value.universityAddress,
+        change: function (universityAddress) {
+            value.universityAddress = universityAddress;
         },
         clear: function () {
-            _university.universityAddress = "";
+            value.universityAddress = "";
         }
     });
     fragment.appendChild(formItem_universityAddress.export());
 
     var formItem_undergraduateTotalNumber = new kf.components.formItem_text({
         label: "本科生人数",
-        value: _university.undergraduateTotalNumber,
-        change: function (value) {
-            _university.undergraduateTotalNumber = value;
+        value: value.undergraduateTotalNumber,
+        change: function (undergraduateTotalNumber) {
+            value.undergraduateTotalNumber = undergraduateTotalNumber;
         },
         clear: function () {
-            _university.undergraduateTotalNumber = 0;
+            value.undergraduateTotalNumber = 0;
         }
     });
     fragment.appendChild(formItem_undergraduateTotalNumber.export());
 
     var formItem_postgraduateTotalNumber = new kf.components.formItem_text({
         label: "研究生人数",
-        value: _university.postgraduateTotalNumber,
-        change: function (value) {
-            _university.postgraduateTotalNumber = value;
+        value: value.postgraduateTotalNumber,
+        change: function (postgraduateTotalNumber) {
+            value.postgraduateTotalNumber = postgraduateTotalNumber;
         },
         clear: function () {
-            _university.postgraduateTotalNumber = 0;
+            value.postgraduateTotalNumber = 0;
         }
     });
     fragment.appendChild(formItem_postgraduateTotalNumber.export());
 
     var formItem_overseasStudentTotalNumber = new kf.components.formItem_text({
         label: "留学生人数",
-        value: _university.overseasStudentTotalNumber,
-        change: function (value) {
-            _university.overseasStudentTotalNumber = value;
+        value: value.overseasStudentTotalNumber,
+        change: function (overseasStudentTotalNumber) {
+            value.overseasStudentTotalNumber = overseasStudentTotalNumber;
         },
         clear: function () {
-            _university.overseasStudentTotalNumber = 0;
+            value.overseasStudentTotalNumber = 0;
         }
     });
     fragment.appendChild(formItem_overseasStudentTotalNumber.export());
@@ -155,27 +149,27 @@ function initUniversityUI() {
 
     var formItem_211 = new kf.components.formItem_checkbox({
         label: "211",
-        checked: _university.Is211 == 1,
+        checked: value.Is211 == 1,
         click: function (checked) {
-            _university.Is211 = checked ? 1 : 0;
+            value.Is211 = checked ? 1 : 0;
         }
     });
     fragment.appendChild(formItem_211.export());
 
     var formItem_985 = new kf.components.formItem_checkbox({
         label: "985",
-        checked: _university.Is985 == 1,
+        checked: value.Is985 == 1,
         click: function (checked) {
-            _university.Is985 = checked ? 1 : 0;
+            value.Is985 = checked ? 1 : 0;
         }
     });
     fragment.appendChild(formItem_985.export());
 
     var formItem_doubleClass = new kf.components.formItem_checkbox({
         label: "双一流",
-        checked: _university.IsDoubleClass == 1,
+        checked: value.IsDoubleClass == 1,
         click: function (checked) {
-            _university.IsDoubleClass = checked ? 1 : 0
+            value.IsDoubleClass = checked ? 1 : 0
         }
     });
     fragment.appendChild(formItem_doubleClass.export());
@@ -188,7 +182,7 @@ function initUniversityUI() {
     fragment.appendChild(textarea);
     document.getElementById("university").appendChild(fragment);
     CKEDITOR.replace("universityAbstract");
-    CKEDITOR.instances.universityAbstract.setData(_university.universityAbstract);
+    CKEDITOR.instances.universityAbstract.setData(value.universityAbstract);
 }
 
 function getUniversityId() {
@@ -199,8 +193,6 @@ function getUniversityId() {
     }
 }
 
-
-
 function initPageFooter() {
     var footer = document.getElementsByTagName("footer")[0];
     $(footer).addClass("ui-footer ui-footer-positive ui-btn-group");
@@ -209,6 +201,7 @@ function initPageFooter() {
         className: "ui-btn ui-btn-primary",
         text: "保存",
         click: function () {
+            if (!_university.validate()) return false;
             if (_university.isNew())
                 _university.add();
             else

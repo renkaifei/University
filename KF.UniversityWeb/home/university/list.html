@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>大学报考</title>
+    <link type="text/css" rel="stylesheet" href="http://i.gtimg.cn/vipstyle/frozenui/2.0.0/css/frozen.css" />
+    <link href="/Content/common.css" rel="stylesheet" />
+    <script src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+    <script src="/Scripts/Framework/Components/base.js"></script>
+    <script src="/Scripts/Framework/util.js"></script>
+    <script src="/Scripts/Framework/Components/div_list_info.js"></script>
+    <script src="/Scripts/Framework/province.js"></script>
+    <script src="/Scripts/Framework/city.js"></script>
+    <script src="/Scripts/Framework/university.js"></script>
+    <script src="/Scripts/Framework/Module/universitylist.js"></script>
+</head>
+<body>
+    <header></header>
+    <footer></footer>
+    <section class="ui-container">
+        <div class="ui-panel">
+            <ul class="ui-list">
+                <li>
+                    <div class="ui-list-label">
+                        所在省份:
+                    </div>
+                    <div class="ui-list-info mylabel-list" id="provinces">
+
+                    </div>
+                </li>
+                <li>
+                    <div class="ui-list-label">
+                        所在城市:
+                    </div>
+                    <div class="ui-list-info mylabel-list" id="citys">
+
+                    </div>
+                </li>
+                <li>
+                    <div class="ui-list-label">
+                        搜索结果:
+                    </div>
+                    <div class="ui-list-info" id="result">
+
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="ui-panel">
+            <ul class="ui-list" id="universitys"></ul>
+        </div>
+    </section>
+
+    <script>
+        $(document).ready(function () {
+            pageInit();
+        });
+    </script>
+</body>
+</html>

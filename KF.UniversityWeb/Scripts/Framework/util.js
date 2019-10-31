@@ -115,13 +115,11 @@ var kf = (function (kf,$) {
     });
 
     util.entities = function () {
-        this.totalCount = 0;
         this.values = {};
         this.filter = {};
     }
 
     util.entities.prototype.add = function (key, value) {
-        this.totalCount = this.totalCount + 1;
         this.values["key_" + key] = value;
     }
 
@@ -151,7 +149,8 @@ var kf = (function (kf,$) {
         util.entities.call(this);
         this.filter = {
             pageIndex: 1,
-            pageSize: 50
+            pageSize: 50,
+            totalCount:0
         }
     }
 
@@ -166,7 +165,7 @@ var kf = (function (kf,$) {
     }
 
     util.entitiesPage.prototype.isLast = function () {
-        return this.filter.pageIndex * this.filter.pageSize >= this.totalCount;
+        return false;
     }
 
     util.entitiesPage.prototype.isFirst = function () {

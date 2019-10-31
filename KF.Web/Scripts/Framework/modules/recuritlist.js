@@ -69,15 +69,6 @@ function initPageHeader(value) {
 
     var h1 = kf.base.h1UI({ text: value.companyName + " 招聘" });
     header.appendChild(h1);
-
-    var btnRight = new kf.base.buttonUI({
-        className: "ui-btn",
-        text: "...",
-        click: function () {
-            window.location.href = "/home/province/city/company/recurit/detail.html?companyId=" + _company.companyId;
-        }
-    });
-    header.appendChild(btnRight.export());
 }
 
 function initYears() {
@@ -123,17 +114,18 @@ function initUniversitys() {
         _universityGridDialog.addRows(_self.values);
         _universityGridDialog.show();
     }
-    _universitys.afterGetListInRecurit = function () {
-        var _self = this;
-        var fragment = document.createDocumentFragment();
-        $.each(_self.values, function (i, value) {
-            var label = kf.base.labelUI({ text: value.universityName,className:"ui-label" });
-            $(label).attr("universityId", value.universityId);
-            fragment.appendChild(label);
-        });
-        document.getElementById("universitys").innerHTML = "";
-        document.getElementById("universitys").appendChild(fragment);
-    }
+    _universitys.addLoadRecuritObserver(showRecuritUniversity);
+}
+
+function showRecuritUniversity(values) {
+    var fragment = document.createDocumentFragment();
+    $.each(values, function (i, value) {
+        var label = kf.base.labelUI({ text: value.universityName, className: "ui-label" });
+        $(label).attr("universityId", value.universityId);
+        fragment.appendChild(label);
+    });
+    document.getElementById("universitys").innerHTML = "";
+    document.getElementById("universitys").appendChild(fragment);
 }
 
 function initUniversityGridDialog() {
